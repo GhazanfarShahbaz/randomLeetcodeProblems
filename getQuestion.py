@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import soupsieve
+# import soupsieve
 from random import randint
 from selenium import webdriver
 
