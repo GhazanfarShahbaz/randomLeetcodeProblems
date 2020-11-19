@@ -27,12 +27,18 @@ def parsePage(driver, data):
                 if parser == 1:
                     currentData["number"] = row.text.strip()
                 elif parser == 2:
-                    val = row.text.strip()
+                    val = ""
+                    for x in row.text.strip():
+                        if x.isalnum() or x==" ":       # Sql wasnt inserting due to commaas and other delimter chars
+                            val +=x
+                        else:
+                            val += "_"
+
                     currentData["name"] = val
-                    currentData["subscription"] = "No" if len(row.findChild().contents) == 2 else "Yes"
+                    currentData["subscription"] = False if len(row.findChild().contents) == 2 else True
                     currentData["link"] = f"https://leetcode.com{row.findChild().findChild()['href']}"
                 elif parser == 4:
-                    currentData["acceptance"] = row.text
+                    currentData["acceptance"] = row.text[:len(row.text)-1]
                 elif parser == 5:
                     currentData["difficulty"] = row.text
                     break
@@ -53,9 +59,9 @@ def saveDataAsCsv():
 
     parsePage(driver, data)
 
-    # driver.close()
-    # df = pd.DataFrame.from_dict(data)
-    # df.to_csv("leetcodeData.csv")
+    driver.close()
+    df = pd.DataFrame.from_dict(data)
+    df.to_csv("leetcodeData.csv")
 
 
 
