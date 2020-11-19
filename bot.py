@@ -1,18 +1,26 @@
 import discord
-from os import environ
+from discord.ext import commands
+import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
+from discord.ext.commands import Bot
+# from dotenv import load_dotenv
+# load_dotenv()
 
-client = discord.Client()
+
+TOKEN = os.environ.get("TOKEN")
 
 
+
+bot = Bot("!")
 def createConnection():
-    myConnection = psycopg2.connect(host=environ['HOSTNAME'], user=environ['USERNAME'], password=environ['DB_PASSWORD'], dbname=['DB_NAME'] )
+    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
     cursor = myConnection.cursor()
     return myConnection, cursor
 
-
+@bot.command()
 async def getRandomProblem(difficulty=None, tag=None):
+    print("TEST")
     if difficulty and not allowedDifficulties(difficulty):
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if tag and not allowedTags(tags):
@@ -22,7 +30,7 @@ async def getRandomProblem(difficulty=None, tag=None):
     link = ""
     if  not difficulty and not tag:
         randomNumber = randInt(1,1659)
-        cursor.execute('select * from problems where number = %s, (randomNumber,))
+        cursor.execute('select * from problems where number = %s, (randomNumber,)')
         link = cursor.fetchall()[0]['link']
     elif difficulty and not tag:
         cursor.execute('select Count(*) as total from problems where difficulty = %s, (difficulty,)')
@@ -50,3 +58,5 @@ async def getRandomProblem(difficulty=None, tag=None):
         link = cursor.fetchall()[0]['link']
     
     return link
+
+bot.run(TOKEN)
