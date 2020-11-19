@@ -7,20 +7,20 @@ from discord.ext.commands import Bot
 # from dotenv import load_dotenv
 # load_dotenv()
 
-
 TOKEN = os.environ.get("TOKEN")
 
-
-
 bot = Bot("!")
+bot.get_channel("enter channel id here").send("bot is online")
+
+@bot.has_permissions(kick_user = True)
 def createConnection():
     myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
     cursor = myConnection.cursor()
     return myConnection, cursor
 
 @bot.command()
-async def getRandomProblem(difficulty=None, tag=None):
-    print("TEST")
+async def randomProblem(difficulty=None, tag=None):
+    bot.get_channel("enter channel id here").send("bot is online")
     if difficulty and not allowedDifficulties(difficulty):
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if tag and not allowedTags(tags):
@@ -56,7 +56,7 @@ async def getRandomProblem(difficulty=None, tag=None):
         randomNumber = randint(1, count)
         cursor.execute('select( * from problems where number = %s, (randomNumber,)')
         link = cursor.fetchall()[0]['link']
-    
+    bot.send(link)
     return link
 
 bot.run(TOKEN)
