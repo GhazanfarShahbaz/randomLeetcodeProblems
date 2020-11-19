@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import Select
 
 
 def parsePage(driver, data):
-    soup = BeautifulSoup(driver.page_source, features="html.parser")
+    # soup = BeautifulSoup(driver.page_source, features="html.parser")
 
     start = True
     soup = BeautifulSoup(driver.page_source, features="html.parser")
@@ -47,16 +47,15 @@ def saveDataAsCsv():
     driver.find_element_by_xpath('//select[@class = "form-control"]').click()
 
     select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
-    select.select_by_value('9007199254740991')
+    select.select_by_visible_text('all')
 
     data = []
-    count = 0
 
     parsePage(driver, data)
 
-    driver.close()
-    df = pd.DataFrame.from_dict(data)
-    df.to_csv("leetcodeData.csv")
+    # driver.close()
+    # df = pd.DataFrame.from_dict(data)
+    # df.to_csv("leetcodeData.csv")
 
 
 
