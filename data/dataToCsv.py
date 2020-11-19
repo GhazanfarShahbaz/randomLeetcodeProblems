@@ -7,12 +7,7 @@ import pandas as pd
 import time
 from selenium.webdriver.support.ui import Select
 
-# Wait for 5 seconds
-
-
 def parsePage(driver, data):
-    # soup = BeautifulSoup(driver.page_source, features="html.parser")
-
     start = True
     soup = BeautifulSoup(driver.page_source, features="html.parser")
     
