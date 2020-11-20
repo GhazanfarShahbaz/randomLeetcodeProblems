@@ -79,7 +79,7 @@ async def randomProblem(message, commands):
     elif len(commands) == 3:
         script = ""
 
-        if difficulty != "Any":
+        if difficulty.title() != "Any":
             script += f"difficulty = \'{difficulty}\' and "
         script += f"{tag}"
 
@@ -99,7 +99,7 @@ async def randomProblem(message, commands):
     elif len(commands) == 4:
         script = ""
 
-        if difficulty != "Any":
+        if difficulty.title() != "Any":
             script += f"difficulty = \'{difficulty}\' and "
         if tag.title() != "Any":
             script += f"{tag} and "
