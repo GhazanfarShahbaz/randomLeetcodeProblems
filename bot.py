@@ -3,7 +3,7 @@ from discord.ext import commands
 import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, tasks
 import psycopg2
 
 client = discord.Client()
@@ -118,5 +118,14 @@ async def on_message(message):
                 await message.channel.send(f'The parameters for this function are as follows {COMMANDS[command[1]]["usage"]} there are {COMMANDS[command[1]]["optional_params"]} optional paramters')
             else:
                 await COMMANDS[command[1]]['function'](command[1:], message)
+
+@tasks.loop(seconds=86400)
+async def dailyQuestion():
+    connection, cursor = createConnection()
+    randomNumber = randint(1,1659)
+    cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
+    link = cursor.fetchall()[0][3]
+    connection.close()
+    await client.get_channel(758441730701131805).send(f"Daily Question: \n {link}")
 
 client.run(os.environ["TOKEN"])
