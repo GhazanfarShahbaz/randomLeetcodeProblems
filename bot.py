@@ -59,7 +59,7 @@ async def randomProblem(message, commands):
 
     link = ""
 
-    if  len(commands) == 1:
+    if len(commands) == 1:
         randomNumber = randint(1,1659)
         cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
         link = cursor.fetchall()[0][3]
@@ -73,7 +73,7 @@ async def randomProblem(message, commands):
         randomNumber = randint(1, count)
         cursor.execute('select * from problems where difficulty = %s', (difficulty,))
         link = cursor.fetchall()[randomNumber][3]
-    
+
     elif len(commands) == 3:
         script = ""
 
@@ -81,7 +81,7 @@ async def randomProblem(message, commands):
             script += f"difficulty = \'{difficulty}\' and "
         script += f"{tag}"
 
-        cursor.execute("Select Count(*) from problems " + script)
+        cursor.execute("Select Count(*) from problems Where" + script)
 
         count = cursor.fetchall()[0][0]
         if count == 0:
@@ -89,12 +89,12 @@ async def randomProblem(message, commands):
             return
 
         randomNumber = randint(1, count)
-        cursor.execute("Select * from problems " + script)
+        cursor.execute("Select * from problems Where" + script)
 
         link = cursor.fetchall()[randomNumber][3]
-    
+
     elif len(commands) == 4:
-        script = "" 
+        script = ""
 
         if difficulty.title() != "Any":
             script += f"difficulty = \'{difficulty}\' and "
@@ -103,7 +103,7 @@ async def randomProblem(message, commands):
 
         script += f"{subscription}"
 
-        cursor.execute("Select Count(*) from problems " + script)
+        cursor.execute("Select Count(*) from problems Where" + script)
         count = cursor.fetchall()[0][0]
 
         if count == 0:
@@ -111,7 +111,7 @@ async def randomProblem(message, commands):
             return
 
         randomNumber = randint(1, count)
-        cursor.execute("Select * from problems " + script)
+        cursor.execute("Select * from problems Where" + script)
 
         link = cursor.fetchall()[randomNumber][3]
 
