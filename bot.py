@@ -10,7 +10,7 @@ load_dotenv()
 
 client = discord.Client()
 def createConnection():
-    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'])
+    myConnection = psycopg2.connect(host=os.environ.get('HOSTNAME'), user=os.environ.get('USERNAME'), password=os.environ.get('DB_PASSWORD'), dbname=os.environ.get('DB_NAME'))
     cursor = myConnection.cursor()
     return myConnection, cursor
 
