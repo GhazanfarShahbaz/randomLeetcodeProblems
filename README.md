@@ -5,7 +5,7 @@
 ## Checklist
 * ~~Webscrape data and place it into a csv~~
 * ~~Place data into a database~~
-* Create bot functions - __In Progress__
+* Create bot functions - _In Progress_
 ## Future Functionalities and Functions
 * Function to post a question each day 
 * Save questions that each person in the server has completed
