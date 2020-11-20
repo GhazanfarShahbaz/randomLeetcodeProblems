@@ -20,16 +20,16 @@ async def helpUser(commands, message):
     formString = ""
     currString = f"{commands}"
     await message.channel.send(currString)
-    # if len(commands) == 1:
-    #     if commands[0] in COMMANDS.keys():
-    #         await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
-    #         return
-    #     else:
-    #         await message.channel.send("No such command exists")
-    #         return
-    # else:
-    for command in COMMANDS.keys():
-        formString += f"{command['usage']} /n"
+    if len(commands) == 2:
+        if commands[1] in COMMANDS.keys():
+            await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
+            return
+        else:
+            await message.channel.send("No such command exists")
+            return
+    else:
+        for command in COMMANDS.values():
+            formString += f"{command['usage']} \n"
 
     await message.chanel.send(formString)
 
