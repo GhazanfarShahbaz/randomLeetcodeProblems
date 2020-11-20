@@ -4,55 +4,10 @@ import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
 from discord.ext.commands import Bot
-
 from dotenv import load_dotenv
 load_dotenv()
-# bot = Bot("!")
+
 client = discord.Client()
-# bot.get_channel("enter channel id here").send("bot is online")
-
-COMMANDS = {
-    "help": {
-        "help_message": "Lists all available commnd",
-        "usage": "!leetcode_bot help <command>",
-        "function": "helpUser",
-    },
-    "random": {
-        "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
-        "usage": "!leetcode_bot random <difficulty> <tag>",
-        "function": randomProblem,
-        "required_params": 0,
-        "optional_params": 2,
-        "total_params": 2
-    }
-}
-
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith("!leetcode_bot"):
-        command = message.content.split()
-        if command[1] not in COMMANDS:
-            await message.channel.send('Invalid command, use !leetcode_bot help')
-        else:
-            listLength = len(command) - 2
-            if listLength < COMMANDS[command[1]]["required_params"] or listLength > COMMANDS[command[1]]['total_params']:
-                await message.channel.send(f'The parameters for this function are as follows {COMMANDS[command[1]]["usage"]} there are {COMMANDS[command[1]]["optional_params"]} optional paramters')
-            else:
-                await COMMANDS[command[1]]['function'](command[1:])
-
-
-def createConnection():
-    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
-    cursor = myConnection.cursor()
-    return myConnection, cursor
-
 
 async def randomProblem(commands):
     if len(commands) >= 2 and  allowedDifficulties(commands[1]):
@@ -86,5 +41,53 @@ async def randomProblem(commands):
         link = cursor.fetchall()[0]['link']
 
     await message.channel.send(link)
+
+
+@client.event
+async def on_ready():
+    print('We have logged in as {0.user}'.format(client))
+
+
+COMMANDS = {
+    "help": {
+        "help_message": "Lists all available commnd",
+        "usage": "!leetcode_bot help <command>",
+        "function": "helpUser",
+    },
+    "random": {
+        "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
+        "usage": "!leetcode_bot random <difficulty> <tag>",
+        "function": randomProblem,
+        "required_params": 0,
+        "optional_params": 2,
+        "total_params": 2
+    }
+}
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith("!leetcode_bot"):
+        command = message.content.split()
+        if command[1] not in COMMANDS:
+            await message.channel.send('Invalid command, use !leetcode_bot help')
+        else:
+            listLength = len(command) - 2
+            if listLength < COMMANDS[command[1]]["required_params"] or listLength > COMMANDS[command[1]]['total_params']:
+                await message.channel.send(f'The parameters for this function are as follows {COMMANDS[command[1]]["usage"]} there are {COMMANDS[command[1]]["optional_params"]} optional paramters')
+            else:
+                await COMMANDS[command[1]]['function'](command[1:])
+
+
+def createConnection():
+    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
+    cursor = myConnection.cursor()
+    return myConnection, cursor
+
+
+
 
 client.run(os.environ["TOKEN"])
