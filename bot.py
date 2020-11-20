@@ -31,7 +31,7 @@ async def helpUser(commands, message):
         for command in COMMANDS.values():
             formString += f"{command['usage']} \n"
 
-    await message.chanel.send(formString)
+    await message.channel.send(formString)
 
 
 async def randomProblem(commands, message):
