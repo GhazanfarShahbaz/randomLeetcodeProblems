@@ -5,6 +5,7 @@ from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
+import psycopg2
 load_dotenv()
 
 client = discord.Client()
