@@ -21,7 +21,7 @@ async def helpUser(message, commands):
 
     if len(commands) == 2:
         if commands[1] in COMMANDS.keys():
-            await message.channel.send(f"```Usage is as follows: {COMMANDS[commands[1]]['usage']}```")
+            await message.channel.send(f"```{COMMANDS[commands[1]]['help_message']} \n {COMMANDS[commands[1]]['help_note']}  \n Usage is as follows: {COMMANDS[commands[1]]['usage']}```")
             return
         else:
             await message.channel.send("```No such command exists```")
@@ -85,6 +85,7 @@ async def randomProblem(message, commands):
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
+        "help_note": "Command should be a command that exists for the bot",
         "usage": "!questions help <command>",
         "function": helpUser,
         "required_params": 0,
@@ -92,7 +93,8 @@ COMMANDS = {
         "total_params": 1
     },
     "random": {
-        "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
+        "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted and are optional",
+        "help_note": "Difficulty has 3 possible parameters: Easy, medium and hard, tag has a bit more and will be listed if you call an unexisting tag",
         "usage": "!questions random <difficulty> <tag>",
         "function": randomProblem,
         "required_params": 0,
