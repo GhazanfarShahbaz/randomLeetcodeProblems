@@ -16,7 +16,9 @@ def createConnection():
 
 
 async def randomProblem(commands, message):
+    print(commands)
     if len(commands) >= 2 and  allowedDifficulties(commands[1]):
+        print("TEST")
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if  len(commands) == 3 and not allowedTags(commands[2]):
         return "You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find"
@@ -27,12 +29,14 @@ async def randomProblem(commands, message):
     print(tags, difficulty, commands)
 
     connection, cursor = createConnection()
-    
+
     link = ""
+
     if  len(commands) == 1:
         randomNumber = randint(1,1659)
         cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
         link = cursor.fetchall()[0][3]
+
     elif len(commands) == 2:
         cursor.execute('select Count(*) as total from problems where difficulty = %s', (difficulty,))
         count = cursor.fetchall()[0][0]
@@ -41,6 +45,7 @@ async def randomProblem(commands, message):
         randomNumber = randint(1, count)
         cursor.execute('select * from problems where number = %s', (randomNumber,))
         link = cursor.fetchall()[0][3]
+    
     elif len(commands) == 3:
         script = f"select Count(*) as total from problems where difficulty = \'{difficulty}\' and {tag}"
         cursor.execute(script)
