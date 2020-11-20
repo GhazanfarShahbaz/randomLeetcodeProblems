@@ -44,13 +44,14 @@ async def randomProblem(message, commands):
     if  len(commands) == 3 and not allowedTags(commands[2]):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
-    if len(commands) == 4 and (commands[3] != "true" or commands[3] != "false"):
+    if len(commands) == 4 and (commands[3] != "yes" or commands[3] != "no"):
         await message.channel.send("```Subscription should only be true or false```")
         return
     
     
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
+    subscription = "subscription" if len(commands) == 4 and commands[3] = "yes" else "not subscription"
 
     connection, cursor = createConnection()
 
@@ -62,7 +63,7 @@ async def randomProblem(message, commands):
         link = cursor.fetchall()[0][3]
 
     elif len(commands) == 2:
-        cursor.execute('select Count(*) as total from problems where difficulty = %s', (difficulty,))
+        cursor.execute('select Count(*) from problems where difficulty = %s', (difficulty,))
         count = cursor.fetchall()[0][0]
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
@@ -72,7 +73,7 @@ async def randomProblem(message, commands):
         link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 3:
-        script = f"select Count(*) as total from problems where difficulty = \'{difficulty}\' and {tag}"
+        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag}"
         cursor.execute(script)
         count = cursor.fetchall()[0][0]
         if count == 0:
@@ -84,9 +85,16 @@ async def randomProblem(message, commands):
         link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 4:
-        await message.channel.send("```This command is under maintenance```")
-        return
-
+        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag} and {sub}"
+        cursor.execute(script)
+        count = cursor.fetchall()[0][0]
+        if count == 0:
+            await message.channel.send("```Sorry no problems matched the criteria```")
+            return
+        randomNumber = randint(1, count)
+        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag} and {sub}"
+        cursor.execute(script)
+        link = cursor.fetchall()[randomNumber][3]
 
     connection.close()
     await message.channel.send(link)
@@ -105,11 +113,11 @@ COMMANDS = {
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted and are optional",
         "help_note": "Difficulty has 3 possible parameters: Easy, medium and hard, tag has a bit more and will be listed if you call an unexisting tag",
-        "usage": "!questions random <difficulty> <tag>",
+        "usage": "!questions random <difficulty> <tag> <subscription>",
         "function": randomProblem,
         "required_params": 0,
-        "optional_params": 2,
-        "total_params": 2
+        "optional_params": 3,
+        "total_params": 3
     }
 }
 
