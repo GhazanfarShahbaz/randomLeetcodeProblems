@@ -52,7 +52,7 @@ async def randomProblem(message, commands):
     
     
     tag = None if len(commands) < 3 else commands[2]
-    difficulty = None if len(commands) < 2 else commands[1].title()
+    difficulty = None if len(commands) < 2 else commands[1]
     subscription = "subscription" if len(commands) == 4 and commands[3] == "yes" else "not subscription"
 
     connection, cursor = createConnection()
@@ -77,7 +77,7 @@ async def randomProblem(message, commands):
     elif len(commands) == 3:
         script = ""
 
-        if difficulty.title() != "Any":
+        if difficulty != "Any":
             script += f"difficulty = \'{difficulty}\' and "
         script += f"{tag}"
 
@@ -96,7 +96,7 @@ async def randomProblem(message, commands):
     elif len(commands) == 4:
         script = ""
 
-        if difficulty.title() != "Any":
+        if difficulty != "Any":
             script += f"difficulty = \'{difficulty}\' and "
         if tag.title() != "Any":
             script += f"{tag} and "
