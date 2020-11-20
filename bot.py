@@ -25,7 +25,7 @@ async def randomProblem(commands, message):
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
 
-    string = f"Debugging: {tags}, {difficulty}, {len(commands)}, {commands}"
+    string = f"Debugging: {tag}, {difficulty}, {len(commands)}, {commands}"
     await message.channel.send(string)
     connection, cursor = createConnection()
 
