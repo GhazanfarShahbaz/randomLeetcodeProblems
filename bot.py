@@ -4,8 +4,7 @@ import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
 from discord.ext.commands import Bot
-from dotenv import load_dotenv
-load_dotenv()
+import psycopg2
 
 client = discord.Client()
 
@@ -82,7 +81,7 @@ async def randomProblem(commands, message):
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
-        "usage": "!leetcode_bot help <command>",
+        "usage": "!questions help <command>",
         "function": helpUser,
         "required_params": 0,
         "optional_params": 1,
@@ -90,7 +89,7 @@ COMMANDS = {
     },
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
-        "usage": "!leetcode_bot random <difficulty> <tag>",
+        "usage": "!questions random <difficulty> <tag>",
         "function": randomProblem,
         "required_params": 0,
         "optional_params": 2,
@@ -110,10 +109,10 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith("!leetcode_bot"):
+    if message.content.startswith("!question"):
         command = message.content.split()
         if command[1] not in COMMANDS:
-            await message.channel.send('Invalid command, use !leetcode_bot help')
+            await message.channel.send('Invalid command, use !questions help')
         else:
             listLength = len(command) - 2
             if listLength < COMMANDS[command[1]]["required_params"] or listLength > COMMANDS[command[1]]['total_params']:
