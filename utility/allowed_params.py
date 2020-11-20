@@ -7,4 +7,4 @@ def allowedDifficulties(userPickedDifficulty: str) -> bool:
 
 
 def allowedTags(userPickedTag: str) -> bool:
-    return userPickedTag.title() in tags
+    return userPickedTag in tags

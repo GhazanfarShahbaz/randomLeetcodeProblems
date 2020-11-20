@@ -24,8 +24,6 @@ async def randomProblem(commands, message):
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
 
-    string = f"Debugging: {tag}, {difficulty}, {len(commands)}, {commands}"
-    await message.channel.send(string)
     connection, cursor = createConnection()
 
     link = ""
@@ -56,6 +54,7 @@ async def randomProblem(commands, message):
         cursor.execute('select * from problems where number = %s', (randomNumber,))
         link = cursor.fetchall()[0][3]
 
+    connection.close()
     await message.channel.send(link)
 
 
