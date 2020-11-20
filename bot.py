@@ -81,7 +81,7 @@ async def randomProblem(message, commands):
             script += f"difficulty = \'{difficulty}\' and "
         script += f"{tag}"
 
-        cursor.execute("Selection Count(*) from problems " + script)
+        cursor.execute("Select Count(*) from problems " + script)
 
         count = cursor.fetchall()[0][0]
         if count == 0:
@@ -89,7 +89,7 @@ async def randomProblem(message, commands):
             return
 
         randomNumber = randint(1, count)
-        cursor.execute("Selection * from problems " + script)
+        cursor.execute("Select * from problems " + script)
 
         link = cursor.fetchall()[randomNumber][3]
     
@@ -103,7 +103,7 @@ async def randomProblem(message, commands):
 
         script += f"{subscription}"
 
-        cursor.execute("Selection Count(*) from problems " + script)
+        cursor.execute("Select Count(*) from problems " + script)
         count = cursor.fetchall()[0][0]
 
         if count == 0:
@@ -111,7 +111,7 @@ async def randomProblem(message, commands):
             return
 
         randomNumber = randint(1, count)
-        cursor.execute("Selection * from problems " + script)
+        cursor.execute("Select * from problems " + script)
 
         link = cursor.fetchall()[randomNumber][3]
 
