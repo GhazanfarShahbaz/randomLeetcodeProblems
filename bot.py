@@ -5,21 +5,38 @@ from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
-import psycopg2
 load_dotenv()
 
 client = discord.Client()
+
 def createConnection():
     myConnection = psycopg2.connect(host=os.environ.get('HOSTNAME'), user=os.environ.get('USERNAME'), password=os.environ.get('DB_PASSWORD'), dbname=os.environ.get('DB_NAME'))
     cursor = myConnection.cursor()
     return myConnection, cursor
 
+async def helpUser(message, commands):
+    formString = ""
+    if commands:
+        if commands[0] in COMMANDS:
+            await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
+            return
+        else:
+            await message.channel.send("No such command exists")
+            return
+    else:
+        for command in COMMANDS.keys():
+            formString += f"{command['usage']} /n"
+
+    await message.chanel.send(formString)
+
 
 async def randomProblem(commands, message):
     if len(commands) >= 2 and not allowedDifficulties(commands[1]):
         await message.channel.send("You can only pick from these difficulties: Easy, Medium, Hard")
+        return
     if  len(commands) == 3 and not allowedTags(commands[2]):
         await message.channel.send("You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find")
+        return
     
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
@@ -57,17 +74,11 @@ async def randomProblem(commands, message):
     connection.close()
     await message.channel.send(link)
 
-
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
-
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
         "usage": "!leetcode_bot help <command>",
-        "function": "helpUser",
+        "function": helpUser,
     },
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
@@ -78,6 +89,12 @@ COMMANDS = {
         "total_params": 2
     }
 }
+
+
+
+@client.event
+async def on_ready():
+    print('We have logged in as {0.user}'.format(client))
 
 
 @client.event
