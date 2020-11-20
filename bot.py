@@ -43,9 +43,6 @@ async def randomProblem(message, commands):
     if (len(commands) == 2 and not allowedDifficulties(commands[1])) or (len(commands) > 2 and (not allowedDifficulties(commands[1]) and commands[1].title() != "Any")):
         await message.channel.send("```You can only pick from these difficulties: Easy, Medium, Hard```")
         return
-    test = len(commands) == 3 and not allowedTags(commands[2])
-    otherTest = (len(commands) > 3 and (not allowedTags(commands[2]) and commands[2].title() != "Any"))
-    print(commands,  test , otherTest )
     if  (len(commands) == 3 and not allowedTags(commands[2])) or (len(commands) > 3 and (not allowedTags(commands[2]) and commands[2].title() != "Any")):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
@@ -61,6 +58,7 @@ async def randomProblem(message, commands):
     connection, cursor = createConnection()
 
     link = ""
+    script = ""
     # Can combine ese to one statement
     if len(commands) == 1:
         randomNumber = randint(1,1659)
@@ -85,7 +83,7 @@ async def randomProblem(message, commands):
         script += f"{tag}"
 
         cursor.execute("Select Count(*) from problems Where " + script)
-
+        print(script)
         count = cursor.fetchall()[0][0]
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
@@ -108,7 +106,7 @@ async def randomProblem(message, commands):
 
         cursor.execute("Select Count(*) from problems Where " + script)
         count = cursor.fetchall()[0][0]
-
+        print(script)
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
@@ -118,6 +116,7 @@ async def randomProblem(message, commands):
 
         link = cursor.fetchall()[randomNumber][3]
 
+    print(script)
     connection.close()
     await message.channel.send(link)
 
