@@ -1,5 +1,5 @@
 difficulties = ("Easy", "Medium", "Hard")
-tags = {'Arrays' ,'Hash_Table' ,'Linked_Lists' ,'Math' ,'Two_Pointers' ,'String' ,'Binary_Search' ,'Divide_and_Conquer' ,'Dynamic_Programming' ,'Backtracking' ,'Stack' ,'Heap' ,'Greedy' ,'Sort' ,'Bit_Manipulation' ,'Tree' ,'Depth_First_Search' ,'Breadth_First_Search' ,'Union_Find' ,'Graph' ,'Design' ,'Topological_Sort' ,'Trie' ,'Binary_Indexed_Tree' ,'Segment_Tree' ,'Binary_Search_Tree' ,'Recursion' ,'Brain_Teaser' ,'Memoization' ,'Queue' ,'Minimax' ,'Reservoir_Sampling' ,'Ordered_Map' ,'Geometry' ,'Random' ,'Rejection_Sampling' ,'Sliding_Window' ,'Line_Sweep' ,'Rolling_Hash' ,'Suffix_Array'}
+tags = {'arrays', 'backtracking', 'binary_indexed_tree', 'binary_search', 'binary_search_tree', 'bit_manipulation', 'brain_teaser', 'breadth_first_search', 'depth_first_search', 'design', 'divide_and_conquer', 'dynamic_programming', 'geometry', 'graph', 'greedy', 'hash_table', 'heap', 'line_sweep', 'linked_lists', 'math', 'memoization', 'minimax', 'ordered_map', 'queue', 'random', 'recursion', 'rejection_sampling', 'reservoir_sampling', 'rolling_hash', 'segment_tree', 'sliding_window', 'sort', 'stack', 'string', 'suffix_array', 'topological_sort', 'tree', 'trie', 'two_pointers', 'union_find'}
 
 
 def allowedDifficulties(userPickedDifficulty: str) -> bool:

@@ -19,32 +19,33 @@ async def randomProblem(commands):
     if len(commands) >= 2 and  allowedDifficulties(commands[1]):
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if  len(commands) == 3 and not allowedTags(commands[2]):
-        return "You can only pick from these tags: Arrays ,Hash_Table ,Linked_Lists ,Math ,Two_Pointers ,String ,Binary_Search ,Divide_and_Conquer ,Dynamic_Programming ,Backtracking ,Stack ,Heap ,Greedy ,Sort ,Bit_Manipulation ,Tree ,Depth_First_Search ,Breadth_First_Search ,Union_Find ,Graph ,Design ,Topological_Sort ,Trie ,Binary_Indexed_Tree ,Segment_Tree ,Binary_Search_Tree ,Recursion ,Brain_Teaser ,Memoization ,Queue ,Minimax ,Reservoir_Sampling ,Ordered_Map ,Geometry ,Random ,Rejection_Sampling ,Sliding_Window ,Line_Sweep ,Rolling_Hash ,Suffix_Array"
+        return "You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find"
     
     tags = None if len(commands) < 3 else commands[2]
 
     connection, cursor = createConnection()
     link = ""
     if  len(commands) == 1:
-        randomNumber = randInt(1,1659)
-        cursor.execute('select * from problems where number = %s, (randomNumber,)')
-        link = cursor.fetchall()[0]['link']
+        randomNumber = randint(1,1659)
+        cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
+        link = cursor.fetchall()[0][3]
     elif len(commands) == 2:
-        cursor.execute('select Count(*) as total from problems where difficulty = %s, (difficulty,)')
-        count = cursor.fetchall()[0]['total']
+        cursor.execute('select Count(*) as total from problems where difficulty = %s', (difficulty,))
+        count = cursor.fetchall()[0][0]
         if count == 0:
             return "Sorry no problems matched the criteria"
         randomNumber = randint(1, count)
-        cursor.execute('select( * from problems where number = %s, (randomNumber,)')
-        link = cursor.fetchall()[0]['link']
+        cursor.execute('select * from problems where number = %s', (randomNumber,))
+        link = cursor.fetchall()[0][3]
     elif len(commands) == 3:
-        cursor.execute('select Count(*) as total from problems where tag = %s and difficulty = %s, (tag, difficulty,)')
-        count = cursor.fetchall()[0]['total']
+        script = f"select Count(*) as total from problems where difficulty = \'{difficulty}\' and {tag}"
+        cursor.execute(script)
+        count = cursor.fetchall()[0][0]
         if count == 0:
             return "Sorry no problems matched the criteria"
         randomNumber = randint(1, count)
-        cursor.execute('select( * from problems where number = %s, (randomNumber,)')
-        link = cursor.fetchall()[0]['link']
+        cursor.execute('select * from problems where number = %s', (randomNumber,))
+        link = cursor.fetchall()[0][3]
 
     await message.channel.send(link)
 
