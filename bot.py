@@ -17,7 +17,7 @@ def createConnection():
 
 async def randomProblem(commands, message):
     print(commands)
-    if len(commands) >= 2 and  allowedDifficulties(commands[1]):
+    if len(commands) >= 2 and  not allowedDifficulties(commands[1]):
         print("TEST")
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if  len(commands) == 3 and not allowedTags(commands[2]):
