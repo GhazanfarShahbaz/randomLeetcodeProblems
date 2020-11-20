@@ -44,6 +44,10 @@ async def randomProblem(message, commands):
     if  len(commands) == 3 and not allowedTags(commands[2]):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
+    if len(commands) == 4 and (commands[3] != "true" or commands[3] != "false"):
+        await message.channel.send("```Subscription should only be true or false```")
+        return
+    
     
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
@@ -75,9 +79,14 @@ async def randomProblem(message, commands):
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
         randomNumber = randint(1, count)
-        script = f"select * as total from problems where difficulty = \'{difficulty}\' and {tag}"
+        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag}"
         cursor.execute(script)
         link = cursor.fetchall()[randomNumber][3]
+    
+    elif len(commands) == 4:
+        await message.channel.send("```This command is under maintenance```")
+        return
+
 
     connection.close()
     await message.channel.send(link)
