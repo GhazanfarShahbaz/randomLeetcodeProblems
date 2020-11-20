@@ -18,16 +18,18 @@ def createConnection():
 
 async def helpUser(message, commands):
     formString = ""
-    if len(commands) == 1:
-        if commands[0] in COMMANDS:
-            await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
-            return
-        else:
-            await message.channel.send("No such command exists")
-            return
-    else:
-        for command in COMMANDS.keys():
-            formString += f"{command['usage']} /n"
+    currString = f"{commands}, {len(commands)} "
+    await message.channel.send(currString)
+    # if len(commands) == 1:
+    #     if commands[0] in COMMANDS.keys():
+    #         await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
+    #         return
+    #     else:
+    #         await message.channel.send("No such command exists")
+    #         return
+    # else:
+    for command in COMMANDS.keys():
+        formString += f"{command['usage']} /n"
 
     await message.chanel.send(formString)
 
