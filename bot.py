@@ -15,7 +15,7 @@ def createConnection():
     return myConnection, cursor
 
 
-async def randomProblem(commands):
+async def randomProblem(commands, message):
     if len(commands) >= 2 and  allowedDifficulties(commands[1]):
         return "You can only pick from these difficulties: Easy, Medium, Hard"
     if  len(commands) == 3 and not allowedTags(commands[2]):
@@ -86,6 +86,6 @@ async def on_message(message):
             if listLength < COMMANDS[command[1]]["required_params"] or listLength > COMMANDS[command[1]]['total_params']:
                 await message.channel.send(f'The parameters for this function are as follows {COMMANDS[command[1]]["usage"]} there are {COMMANDS[command[1]]["optional_params"]} optional paramters')
             else:
-                await COMMANDS[command[1]]['function'](command[1:])
+                await COMMANDS[command[1]]['function'](command[1:], message)
 
 client.run(os.environ["TOKEN"])
