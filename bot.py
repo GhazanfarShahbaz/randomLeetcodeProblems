@@ -17,8 +17,7 @@ def createConnection():
 
 async def helpUser(commands, message):
     formString = ""
-    currString = f"{commands}"
-    await message.channel.send(currString)
+
     if len(commands) == 2:
         if commands[1] in COMMANDS.keys():
             await message.channel.send(f"Usage is as follows: {COMMANDS[commands[0]]['usage']}")
