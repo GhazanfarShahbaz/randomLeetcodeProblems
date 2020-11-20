@@ -16,6 +16,7 @@ def createConnection():
 
 
 async def helpUser(message, commands):
+    """Provides the user a list of commands or gives instructions on how to use a command"""
     print("Help user was called with the following commands", commands)
     formString = ""
 
@@ -36,6 +37,7 @@ async def helpUser(message, commands):
 
 
 async def randomProblem(message, commands):
+    """Returns a link random problem from leetcode"""
     print("Random problem was called with the following commands", commands)
 
     if len(commands) >= 2 and not allowedDifficulties(commands[1]):
@@ -85,14 +87,14 @@ async def randomProblem(message, commands):
         link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 4:
-        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag} and {sub}"
+        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag} and {subscription}"
         cursor.execute(script)
         count = cursor.fetchall()[0][0]
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
         randomNumber = randint(1, count)
-        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag} and {sub}"
+        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag} and {subscription}"
         cursor.execute(script)
         link = cursor.fetchall()[randomNumber][3]
 
