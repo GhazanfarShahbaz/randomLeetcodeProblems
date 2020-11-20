@@ -9,6 +9,11 @@ import psycopg2
 load_dotenv()
 
 client = discord.Client()
+def createConnection():
+    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'])
+    cursor = myConnection.cursor()
+    return myConnection, cursor
+
 
 async def randomProblem(commands):
     if len(commands) >= 2 and  allowedDifficulties(commands[1]):
@@ -81,14 +86,5 @@ async def on_message(message):
                 await message.channel.send(f'The parameters for this function are as follows {COMMANDS[command[1]]["usage"]} there are {COMMANDS[command[1]]["optional_params"]} optional paramters')
             else:
                 await COMMANDS[command[1]]['function'](command[1:])
-
-
-def createConnection():
-    myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
-    cursor = myConnection.cursor()
-    return myConnection, cursor
-
-
-
 
 client.run(os.environ["TOKEN"])
