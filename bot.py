@@ -16,7 +16,7 @@ def createConnection():
 
 
 async def randomProblem(commands, message):
-    await message.channel.send(commands)
+    # await message.channel.send(commands)
     # print(commands)
     # if len(commands) >= 2 and not allowedDifficulties(commands[1]):
     #     print("TEST")
@@ -27,8 +27,8 @@ async def randomProblem(commands, message):
     tags = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1]
 
-    print(tags, difficulty, commands)
-
+    string = f"Debugging: {tags}, {difficulty}, {len(commands)}, {commands}"
+    await message.channel.send(string)
     connection, cursor = createConnection()
 
     link = ""
