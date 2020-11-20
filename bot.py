@@ -40,10 +40,10 @@ async def randomProblem(message, commands):
     """Returns a link random problem from leetcode"""
     print("Random problem was called with the following commands", commands)
 
-    if len(commands) >= 2 and not allowedDifficulties(commands[1]):
+    if len(commands) == 2 and not allowedDifficulties(commands[1]) or (len(commands) > 2 and (not allowedDifficulties(commands[1]) and commands[1].title() != "Any")):
         await message.channel.send("```You can only pick from these difficulties: Easy, Medium, Hard```")
         return
-    if  len(commands) == 3 and not allowedTags(commands[2]):
+    if  len(commands) == 3 and not allowedTags(commands[2]) or (len(commands) > 3 and (not allowedTags(commands[2]) and commands[2].title() != "Any")):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
     if len(commands) == 4 and (commands[3] != "yes" and commands[3] != "no"):
@@ -75,27 +75,44 @@ async def randomProblem(message, commands):
         link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 3:
-        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag}"
-        cursor.execute(script)
+        script = ""
+
+        if difficulty.title() != "Any":
+            script += f"difficulty = \'{difficulty}\' and "
+        script += f"{tag}"
+
+        cursor.execute("Selection Count(*) from problems " + script)
+
         count = cursor.fetchall()[0][0]
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
+
         randomNumber = randint(1, count)
-        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag}"
-        cursor.execute(script)
+        cursor.execute("Selection * from problems " + script)
+
         link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 4:
-        script = f"select Count(*) from problems where difficulty = \'{difficulty}\' and {tag} and {subscription}"
-        cursor.execute(script)
+        script = "" 
+
+        if difficulty.title() != "Any":
+            script += f"difficulty = \'{difficulty}\' and "
+        if tag != "Any":
+            script += f"{tag} and "
+
+        script += f"{subscription}"
+
+        cursor.execute("Selection Count(*) from problems " + script)
         count = cursor.fetchall()[0][0]
+
         if count == 0:
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
+
         randomNumber = randint(1, count)
-        script = f"select * from problems where difficulty = \'{difficulty}\' and {tag} and {subscription}"
-        cursor.execute(script)
+        cursor.execute("Selection * from problems " + script)
+
         link = cursor.fetchall()[randomNumber][3]
 
     connection.close()
