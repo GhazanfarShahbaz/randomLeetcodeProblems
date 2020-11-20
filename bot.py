@@ -9,10 +9,12 @@ load_dotenv()
 
 client = discord.Client()
 
+
 def createConnection():
     myConnection = psycopg2.connect(host=os.environ.get('HOSTNAME'), user=os.environ.get('USERNAME'), password=os.environ.get('DB_PASSWORD'), dbname=os.environ.get('DB_NAME'))
     cursor = myConnection.cursor()
     return myConnection, cursor
+
 
 async def helpUser(message, commands):
     formString = ""
@@ -74,11 +76,15 @@ async def randomProblem(commands, message):
     connection.close()
     await message.channel.send(link)
 
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
         "usage": "!leetcode_bot help <command>",
         "function": helpUser,
+        "required_params": 0,
+        "optional_params": 1,
+        "total_params": 1
     },
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
