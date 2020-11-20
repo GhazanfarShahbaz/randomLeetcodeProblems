@@ -58,7 +58,7 @@ async def randomProblem(message, commands):
     connection, cursor = createConnection()
 
     link = ""
-
+    # Can combine ese to one statement
     if len(commands) == 1:
         randomNumber = randint(1,1659)
         cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
@@ -98,7 +98,7 @@ async def randomProblem(message, commands):
 
         if difficulty.title() != "Any":
             script += f"difficulty = \'{difficulty}\' and "
-        if tag != "Any":
+        if tag.title() != "Any":
             script += f"{tag} and "
 
         script += f"{subscription}"
