@@ -21,7 +21,7 @@ async def helpUser(message, commands):
 
     if len(commands) == 2:
         if commands[1] in COMMANDS.keys():
-            await message.channel.send(f"```{COMMANDS[commands[1]]['help_message']} \n {COMMANDS[commands[1]]['help_note']}  \n Usage is as follows: {COMMANDS[commands[1]]['usage']}```")
+            await message.channel.send(f"```{COMMANDS[commands[1]]['help_message']}\n{COMMANDS[commands[1]]['help_note']}\nUsage is as follows: {COMMANDS[commands[1]]['usage']}```")
             return
         else:
             await message.channel.send("```No such command exists```")
