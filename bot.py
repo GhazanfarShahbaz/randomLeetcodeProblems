@@ -51,7 +51,7 @@ async def randomProblem(message, commands):
     
     tag = None if len(commands) < 3 else commands[2]
     difficulty = None if len(commands) < 2 else commands[1].title()
-    subscription = "subscription" if len(commands) == 4 and commands[3] = "yes" else "not subscription"
+    subscription = "subscription" if len(commands) == 4 and commands[3] == "yes" else "not subscription"
 
     connection, cursor = createConnection()
 
