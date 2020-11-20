@@ -20,7 +20,7 @@ COMMANDS = {
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted",
         "usage": "!leetcode_bot random <difficulty> <tag>",
-        "function": "randomProblem",
+        "function": randomProblem,
         "required_params": 0,
         "optional_params": 2,
         "total_params": 2
@@ -47,7 +47,6 @@ async def on_message(message):
             else:
                 await COMMANDS[command[1]]['function'](command[1:])
 
-            
 
 def createConnection():
     myConnection = psycopg2.connect(host=os.environ.get['HOSTNAME'], user=os.environ.get['USERNAME'], password=os.environ.get['DB_PASSWORD'], dbname=os.environ.get['DB_NAME'] )
