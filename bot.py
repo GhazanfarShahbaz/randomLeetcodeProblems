@@ -3,8 +3,9 @@ from discord.ext import commands
 import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
-from discord.ext.commands import Bot, tasks
+from discord.ext.commands import Bot
 import psycopg2
+from discord.ext import tasks
 
 client = discord.Client()
 
