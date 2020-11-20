@@ -51,7 +51,7 @@ async def randomProblem(message, commands):
         return
     
     
-    tag = None if len(commands) < 3 else commands[2]
+    tag = None if len(commands) < 3 else commands[2].title()
     difficulty = None if len(commands) < 2 else commands[1]
     subscription = "subscription" if len(commands) == 4 and commands[3] == "yes" else "not subscription"
 
@@ -69,6 +69,7 @@ async def randomProblem(message, commands):
         cursor.execute('select Count(*) from problems where difficulty = %s', (difficulty,))
         count = cursor.fetchall()[0][0]
         if count == 0:
+            connection.close()
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
         randomNumber = randint(1, count)
@@ -83,9 +84,10 @@ async def randomProblem(message, commands):
         script += f"{tag}"
 
         cursor.execute("Select Count(*) from problems Where " + script)
-        print(script)
         count = cursor.fetchall()[0][0]
         if count == 0:
+            print(script)
+            connection.close()
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
 
@@ -106,8 +108,9 @@ async def randomProblem(message, commands):
 
         cursor.execute("Select Count(*) from problems Where " + script)
         count = cursor.fetchall()[0][0]
-        print(script)
         if count == 0:
+            print(script)
+            connection.close()
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
 
