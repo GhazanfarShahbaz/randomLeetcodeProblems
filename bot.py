@@ -52,14 +52,14 @@ async def randomProblem(message, commands):
     
     
     tag = None if len(commands) < 3 else commands[2].title()
-    difficulty = None if len(commands) < 2 else commands[1]
+    difficulty = None if len(commands) < 2 else commands[1].title()
+    print(tag)
     subscription = "subscription" if len(commands) == 4 and commands[3] == "yes" else "not subscription"
 
     connection, cursor = createConnection()
 
     link = ""
     script = ""
-    # Can combine ese to one statement
     if len(commands) == 1:
         randomNumber = randint(1,1659)
         cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
@@ -69,6 +69,7 @@ async def randomProblem(message, commands):
         cursor.execute('select Count(*) from problems where difficulty = %s', (difficulty,))
         count = cursor.fetchall()[0][0]
         if count == 0:
+            print(script)
             connection.close()
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
