@@ -44,7 +44,7 @@ async def randomProblem(message, commands):
     if  len(commands) == 3 and not allowedTags(commands[2]):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
-    if len(commands) == 4 and (commands[3] != "yes" or commands[3] != "no"):
+    if len(commands) == 4 and (commands[3] != "yes" and commands[3] != "no"):
         await message.channel.send("```Subscription should only be true or false```")
         return
     
