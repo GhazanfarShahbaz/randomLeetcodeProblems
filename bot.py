@@ -45,7 +45,7 @@ async def randomProblem(message, commands):
         return
     test = len(commands) == 3 and not allowedTags(commands[2])
     otherTest = (len(commands) > 3 and (not allowedTags(commands[2]) and commands[2].title() != "Any"))
-    print(commands, message, )
+    print(commands,  test , otherTest )
     if  len(commands) == 3 and not allowedTags(commands[2]) or (len(commands) > 3 and (not allowedTags(commands[2]) and commands[2].title() != "Any")):
         await message.channel.send("```You can only pick from these tags: arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
