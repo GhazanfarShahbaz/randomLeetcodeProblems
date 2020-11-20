@@ -16,9 +16,9 @@ def createConnection():
     return myConnection, cursor
 
 
-async def helpUser(message, commands):
+async def helpUser(commands, message):
     formString = ""
-    currString = f"{commands}, {len(commands)} "
+    currString = f"{commands}"
     await message.channel.send(currString)
     # if len(commands) == 1:
     #     if commands[0] in COMMANDS.keys():
