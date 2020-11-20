@@ -64,8 +64,8 @@ async def randomProblem(message, commands):
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
         randomNumber = randint(1, count)
-        cursor.execute('select * from problems where number = %s', (randomNumber,))
-        link = cursor.fetchall()[0][3]
+        cursor.execute('select * from problems where difficulty = %s', (difficulty,))
+        link = cursor.fetchall()[randomNumber][3]
     
     elif len(commands) == 3:
         script = f"select Count(*) as total from problems where difficulty = \'{difficulty}\' and {tag}"
@@ -75,8 +75,9 @@ async def randomProblem(message, commands):
             await message.channel.send("```Sorry no problems matched the criteria```")
             return
         randomNumber = randint(1, count)
-        cursor.execute('select * from problems where number = %s', (randomNumber,))
-        link = cursor.fetchall()[0][3]
+        script = f"select * as total from problems where difficulty = \'{difficulty}\' and {tag}"
+        cursor.execute(script)
+        link = cursor.fetchall()[randomNumber][3]
 
     connection.close()
     await message.channel.send(link)
