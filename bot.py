@@ -138,14 +138,15 @@ async def information(message, commands):
         connection.close()
         return
     data = cursor.fetchone()
+
     if not data:
         message.channel.send("Sorry this link/number does not exist")
         connection.close()
         return
     colNames = [val[0] for val in cursor.description]
-    data = cursor.fetchone()
     foundFirstType = False
     formString = "```\n"
+
     for i in range(len(colNames)):
         if i > 5 and not data[i]:
             pass
@@ -162,7 +163,7 @@ async def information(message, commands):
     
     formString += "\n```"
     connection.close()
-    
+
     message.channel.send(formString)
 
         
