@@ -5,6 +5,7 @@ import psycopg2
 import os
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags
+from validators import url
 
 client = discord.Client()
 
@@ -53,7 +54,6 @@ async def randomProblem(message, commands):
     
     tag = None if len(commands) < 3 else commands[2].title()
     difficulty = None if len(commands) < 2 else commands[1].title()
-    print(tag)
     subscription = "subscription" if len(commands) == 4 and commands[3] == "yes" else "not subscription"
 
     connection, cursor = createConnection()
@@ -125,6 +125,51 @@ async def randomProblem(message, commands):
     await message.channel.send(link)
 
 
+async def information(message, commands):
+    connection, cursor = createConnection()
+    if commands[1].isnumeric():
+        value = int(commmands[1])
+        cursor.execute("select * from problems where number = %s", (value,))
+    elif url(commands[1]):
+        thisUrl = commands[1]
+        cursor.execute("select * from problems where link = %s", (thisUrl))
+    else:
+        message.channel.send("Sorry, this is not a valid response. You should supply either the problem number or its link")
+        connection.close()
+        return
+    data = cursor.fetchone()
+    if not data:
+        message.channel.send("Sorry this link/number does not exist")
+        connection.close()
+        return
+    colNames = [val[0] for val in cursor.description]
+    data = cursor.fetchone()
+    foundFirstType = False
+    formString = "```\n"
+    for i in range(len(colNames)):
+        if i > 5 and not data[i]:
+            pass
+        elif i > 5 and data[i] and not foundFirstType:
+            foundFirstType = True
+            formString += f"Problem Tags: {colNames[i]}"
+        elif i > 5:
+            formString += f", {colNames[i]}"
+        else:
+            formString += f"{colNames[i]}: {data[i]}\n"
+
+    if not foundFirstType:
+        formString += "Problem Tags: None"
+    
+    formString += "\n```"
+    message.channel.send(formString)
+
+        
+    
+    
+
+
+    
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
@@ -143,6 +188,15 @@ COMMANDS = {
         "required_params": 0,
         "optional_params": 3,
         "total_params": 3
+    },
+    "information": {
+        "help_message": "Spits out information for a given question number or link",
+        "help_note": "Identifier can either be a number or a link",
+        "usage": "!questions information <identifier>",
+        "function": information,
+        "required_params": 1,
+        "optional_params": 0,
+        "total_params": 1
     }
 }
 
@@ -169,6 +223,7 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
+
 
 
 @tasks.loop(seconds=10)
