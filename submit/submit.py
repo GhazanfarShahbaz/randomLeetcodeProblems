@@ -23,12 +23,14 @@ driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("
 driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(environ.get("LEETCODE_PASS"))
 driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
 
+driver.find_element_by_xpath('//div[@class = "ant-select-dropdown ant-select-dropdown-xs ant-select-dropdown-light ant-select-dropdown--single ant-select-dropdown-placement-bottomLeft  ant-select-dropdown-hidden"]').click()
+
 soup = BeautifulSoup(driver.page_source, features="html.parser")
 test = soup.find_all('span', {"role" : "presentation"})
 
 template = ""
 for x in test:
-    string += x.text + "\n"
+    template += x.text + "\n"
 
 print(string)
 driver.close()
