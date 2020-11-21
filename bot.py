@@ -1,11 +1,19 @@
 import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
-import psycopg2
-import os
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery
 from validators import url
+import psycopg2
+import os
+
 
 client = discord.Client()
 
@@ -84,6 +92,7 @@ async def randomProblem(message, commands):
 
 
 async def information(message, commands):
+    """Returns information for a proble given a link or problem number"""
     connection, cursor = createConnection()
     if commands[1].isnumeric():
         value = int(commands[1])
@@ -124,6 +133,33 @@ async def information(message, commands):
 
     await message.channel.send(formString)    
 
+
+async def template(message, commands):
+    if not url(commands[1]):
+        await message,channel.send("Sorry this is not a valid url")
+        return
+    
+    driver = webdriver.Chrome()
+    driver.get(commands[1])
+
+    driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
+    driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("LEETCODE_EMAIL"))
+    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(environ.get("LEETCODE_PASS"))
+    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
+
+    soup = BeautifulSoup(driver.page_source, features="html.parser")
+    test = soup.find_all('span', {"role" : "presentation"})
+
+    template = "```\n"
+    for x in test:
+        template += x.text + "\n"
+
+    template += "```"
+    driver.close()
+
+    await message.channel.send(template)
+
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
@@ -151,6 +187,15 @@ COMMANDS = {
         "required_params": 1,
         "optional_params": 0,
         "total_params": 1
+    },
+    "template": {
+        "help_message": "Returns the template for a question given a link",
+        "help_note": "Link that is meant to be looked at",
+        'usage': "!questions template <link>",
+        "function": template,
+        "requireed_params": 1,
+        "optional_params": 0,
+        "total_params": 1
     }
 }
 
@@ -163,6 +208,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    """Reads the message and calls the necessary function"""
     if message.author == client.user:
         return
 
