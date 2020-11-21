@@ -155,8 +155,8 @@ async def template(message, commands):
         driver.get(commands[1] + "/submissions/")
 
     driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
-    driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("LEETCODE_EMAIL"))
-    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(environ.get("LEETCODE_PASS"))
+    driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(os.environ.get("LEETCODE_EMAIL"))
+    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(os.environ.get("LEETCODE_PASS"))
     driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
