@@ -24,6 +24,16 @@ def createConnection():
     cursor = myConnection.cursor()
     return myConnection, cursor
 
+def setupBroswer():
+    GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+    CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.binary_location = GOOGLE_CHROME_PATH
+    browser = webdriver.Chrome(execution_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+    return browser
+
 
 async def helpUser(message, commands):
     """Provides the user a list of commands or gives instructions on how to use a command"""
@@ -139,7 +149,7 @@ async def template(message, commands):
         await message,channel.send("Sorry this is not a valid url")
         return
     
-    driver = webdriver.Chrome()
+    driver = setupBroswer()
     driver.get(commands[1])
 
     driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
