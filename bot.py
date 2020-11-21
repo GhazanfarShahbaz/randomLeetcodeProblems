@@ -128,13 +128,13 @@ async def randomProblem(message, commands):
 async def information(message, commands):
     connection, cursor = createConnection()
     if commands[1].isnumeric():
-        value = int(commmands[1])
+        value = int(commands[1])
         cursor.execute("select * from problems where number = %s", (value,))
     elif url(commands[1]):
         thisUrl = commands[1]
         cursor.execute("select * from problems where link = %s", (thisUrl))
     else:
-        message.channel.send("Sorry, this is not a valid response. You should supply either the problem number or its link")
+        message.channel.send("Sorry, this is not a valid parameter. You should supply either the problem number or its link")
         connection.close()
         return
     data = cursor.fetchone()
@@ -161,6 +161,8 @@ async def information(message, commands):
         formString += "Problem Tags: None"
     
     formString += "\n```"
+    connection.close()
+    
     message.channel.send(formString)
 
         
