@@ -88,7 +88,7 @@ async def randomProblem(message, commands):
     cursor.execute("Select * from problems " + script)
     link = cursor.fetchall()[randint(1,count)][3]
     connection.close()
-    await message.channel.send.link(link)
+    await message.channel.send(link)
 
 
 async def information(message, commands):
