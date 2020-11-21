@@ -37,7 +37,7 @@ def setupBroswer():
 
 async def helpUser(message, commands):
     """Provides the user a list of commands or gives instructions on how to use a command"""
-    print("Help user was called with the following commands", commands)
+    print("Help user was called with the following commands: ", commands)
     formString = ""
 
     if len(commands) == 2:
@@ -58,7 +58,7 @@ async def helpUser(message, commands):
 
 async def randomProblem(message, commands):
     """Returns a link random problem from leetcode"""
-    print("Random problem was called with the following commands", commands)
+    print("Random problem was called with the following commands: ", commands)
 
     if len(commands) >=2 and not allowedDifficulties(commands[1]):
         await message.channel.send("```You can only pick from these difficulties: Any, Easy, Medium, Hard```")
@@ -103,6 +103,7 @@ async def randomProblem(message, commands):
 
 async def information(message, commands):
     """Returns information for a proble given a link or problem number"""
+    print("Information function was called with the following parameters: " commands)
     connection, cursor = createConnection()
     if commands[1].isnumeric():
         value = int(commands[1])
@@ -149,6 +150,7 @@ async def template(message, commands):
     if not url(commands[1]):
         await message.channel.send("Sorry this is not a valid url")
         return
+    print("Template function was called with the following parameters:", commands)
     
     driver = setupBroswer()
     if(commands[1][-1] == "/"):
