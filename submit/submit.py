@@ -7,24 +7,34 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-CODE_DRIVER = webdriver.Safari()
+driver = webdriver.Chrome()
 href = "https://leetcode.com/problems/two-sum/submissions/"
 
-CODE_DRIVER.get(href)
-CODE_DRIVER.find_element_by_xpath('//button[@data-cy="submit-code-btn"]').click()
-CODE_DRIVER.find_element_by_xpath("//*[@id ='id_login']").send_keys("TEST")
+driver.get(href)
 
+WebDriverWait(driver,10)
 
-# wait = WebDriverWait(CODE_DRIVER,10)
+# reset_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "code-btn")))
+# CODE_DRIVER.find_element_by_xpath('//button[@data-cy="submit-code-btn"]').click()
+# CODE_DRIVER.find_element_by_xpath("//*[@id ='id_login']").send_keys("TEST")
+# print(driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div/div[3]/div/div[1]/div/div[2]/div/div/div[6]/div[1]/div/div/div/div[5]/div[3]/pre/span').getText())
+
+soup = BeautifulSoup(driver.page_source, features="html.parser")
+for x in soup.find_all('span', role_="presentation"):
+    print(x)
+
+driver.close()
+
+# 
+
 # code = ""
 
 # CODE_DRIVER.get(href)
 
-# reset_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "code-btn")))
 # reset_button.click()
 
 # confirm_button = wait.until(EC.element_to_be_clickable((By.XPATH, '// *[ @ id = "confirmRecent"]'
-#                                                                     ' / div / div / div[3] / button[2]')))
+#                                                                      ' / div / div / div[3] / button[2]')))
 # confirm_button.click()
 
 # CODE_DRIVER.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -37,4 +47,4 @@ CODE_DRIVER.find_element_by_xpath("//*[@id ='id_login']").send_keys("TEST")
 
 # code = ROOT.clipboard_get()
  
-print(code)
+# print(code)
