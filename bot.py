@@ -145,7 +145,7 @@ async def information(message, commands):
 
 async def template(message, commands):
     if not url(commands[1]):
-        await message,channel.send("Sorry this is not a valid url")
+        await message.channel.send("Sorry this is not a valid url")
         return
     
     driver = setupBroswer()
