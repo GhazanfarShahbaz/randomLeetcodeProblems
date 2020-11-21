@@ -1,7 +1,8 @@
 # Discord Leetcode Bot
 ## Current Functions
-* !questions help: lists all commands
-* !questions random <difficulty> <tag>: picks a random question and returns its link, difficulty and tag are optional parameters
+* !questions help : lists all commands
+* !questions random <difficulty> <tag> : picks a random question and returns its link, difficulty and tag are optional parameters
+* !questions information <identifier> : returns information for a problem by number or link
 ## Checklist
 * ~~Webscrape data and place it into a csv~~
 * ~~Place data into a database~~
