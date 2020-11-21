@@ -193,7 +193,7 @@ COMMANDS = {
         "help_note": "Link that is meant to be looked at",
         'usage': "!questions template <link>",
         "function": template,
-        "requireed_params": 1,
+        "required_params": 1,
         "optional_params": 0,
         "total_params": 1
     }
