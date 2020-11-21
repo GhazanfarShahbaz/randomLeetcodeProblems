@@ -1,50 +1,34 @@
 import requests
 from bs4 import BeautifulSoup
 from random import randint
+from os import environ
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from dotenv import load_dotenv
+load_dotenv()
 
 driver = webdriver.Chrome()
 href = "https://leetcode.com/problems/two-sum/submissions/"
 
+
+# driver.get(href)
 driver.get(href)
-
-WebDriverWait(driver,10)
-
-# reset_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "code-btn")))
-# CODE_DRIVER.find_element_by_xpath('//button[@data-cy="submit-code-btn"]').click()
-# CODE_DRIVER.find_element_by_xpath("//*[@id ='id_login']").send_keys("TEST")
-# print(driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div/div[3]/div/div[1]/div/div[2]/div/div/div[6]/div[1]/div/div/div/div[5]/div[3]/pre/span').getText())
+# driver.implicitly_wait(2)
+driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
+driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("LEETCODE_EMAIL"))
+driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(environ.get("LEETCODE_PASS"))
+driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
 
 soup = BeautifulSoup(driver.page_source, features="html.parser")
-for x in soup.find_all('span', role_="presentation"):
-    print(x)
+test = soup.find_all('span', {"role" : "presentation"})
 
+template = ""
+for x in test:
+    string += x.text + "\n"
+
+print(string)
 driver.close()
-
-# 
-
-# code = ""
-
-# CODE_DRIVER.get(href)
-
-# reset_button.click()
-
-# confirm_button = wait.until(EC.element_to_be_clickable((By.XPATH, '// *[ @ id = "confirmRecent"]'
-#                                                                      ' / div / div / div[3] / button[2]')))
-# confirm_button.click()
-
-# CODE_DRIVER.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-# time.sleep(TIME_DELAY + 2)
-
-# code_elem = CODE_DRIVER.find_element_by_class_name("ace_text-input")
-# code_elem.send_keys(Keys.LEFT_CONTROL, 'a')
-# code_elem.send_keys(Keys.LEFT_CONTROL, 'c')
-
-# code = ROOT.clipboard_get()
- 
-# print(code)
