@@ -1,7 +1,7 @@
 # Discord Leetcode Bot
 ## Current Functions
 * !questions help : lists all commands
-* !questions random <difficulty> <tag> : picks a random question and returns its link, difficulty and tag are optional parameters
+* !questions random <difficulty> <tag> : picks a random question and returns its link, difficulty, tag and subscription are optional parameters
 * !questions information <identifier> : returns information for a problem by number or link
 * !questions template <link> : returns the code template for a problem by its link
 ## Checklist

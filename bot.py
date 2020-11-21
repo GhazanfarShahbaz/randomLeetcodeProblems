@@ -25,6 +25,7 @@ def createConnection():
     return myConnection, cursor
 
 def setupBroswer():
+    """Sets up the webdriver, returns the driver so that it can be used"""
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
