@@ -164,14 +164,7 @@ async def information(message, commands):
     formString += "\n```"
     connection.close()
 
-    message.channel.send(formString)
-
-        
-    
-    
-
-
-    
+    await message.channel.send(formString)    
 
 COMMANDS = {
     "help": {
