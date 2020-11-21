@@ -144,6 +144,7 @@ async def information(message, commands):
 
 
 async def template(message, commands):
+    """Returns the template for a questios given a link, need to work on optional param language"""
     if not url(commands[1]):
         await message.channel.send("Sorry this is not a valid url")
         return
