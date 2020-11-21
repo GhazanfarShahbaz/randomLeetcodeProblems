@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 driver = webdriver.Chrome()
-href = "https://leetcode.com/problems/two-sum/submissions/"
+href = "https://leetcode.com/problems/add-two-numbers/submissions/"
 
 
 # driver.get(href)
@@ -28,7 +28,7 @@ test = soup.find_all('span', {"role" : "presentation"})
 
 template = ""
 for x in test:
-    string += x.text + "\n"
+    template += x.text + "\n"
 
-print(string)
+print(template)
 driver.close()

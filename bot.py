@@ -149,7 +149,10 @@ async def template(message, commands):
         return
     
     driver = setupBroswer()
-    driver.get(commands[1])
+    if(commands[1][-1] == "/"):
+        driver.get(commands[1] + "submissions/")
+    else:
+        driver.get(commands[1] + "/submissions/")
 
     driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
     driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("LEETCODE_EMAIL"))
