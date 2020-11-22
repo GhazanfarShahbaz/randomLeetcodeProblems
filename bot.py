@@ -154,7 +154,7 @@ async def description(message, commands):
     if not url(commands[1]):
         await message.channel.send("Sorry this is not a valid url")
         return
-    if len(commands) == 2 and not checkLanguage(commands[2]):
+    if len(commands) == 3 and not checkLanguage(commands[2]):
         await message.channel.send("Sorry this is not a valid language")
         return
     
