@@ -173,7 +173,7 @@ async def description(message, commands):
 
     await message.channel.send(problem)
 
-    language = "Python3" if len(commands) <2 else commands[2].title()
+    language = "Python3" if len(commands) < 3 else commands[2].title()
     xpath = f'//li[@data-cy=\"lang-select-{language.title()}\"]'
 
     driver.find_element_by_xpath('//span[@class="ant-select-arrow"]').click()
