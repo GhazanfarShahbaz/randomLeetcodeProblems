@@ -21,4 +21,4 @@ def getLanguageCode(lang : str) -> None or str:
     return None if lang.lower() not in messageSyntax.keys() else messageSyntax[lang.lower()]
 
 def checkLanguage(lang : str) -> str:
-    return lang.title() in messageSyntax.keys()
+    return lang.lower() in messageSyntax.keys()

@@ -185,7 +185,7 @@ async def description(message, commands):
     driver.find_element_by_xpath(xpath).click()
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    code_block = soup.find_all('span', {"role" : "presentation"})
+    code_block = soup.find_all('span', {"role": "presentation"})
 
     template = f"```{getLanguageCode(language)}\n"
     for x in code_block:
