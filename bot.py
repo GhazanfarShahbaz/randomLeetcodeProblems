@@ -24,6 +24,7 @@ def createConnection():
     cursor = myConnection.cursor()
     return myConnection, cursor
 
+
 def setupBroswer():
     """Sets up the webdriver, returns the driver so that it can be used"""
     chrome_options = webdriver.ChromeOptions()
@@ -103,7 +104,7 @@ async def randomProblem(message, commands):
 
 async def information(message, commands):
     """Returns information for a proble given a link or problem number"""
-    print("Information function was called with the following parameters: " commands)
+    print("Information function was called with the following parameters: ", commands)
     connection, cursor = createConnection()
     if commands[1].isnumeric():
         value = int(commands[1])
