@@ -12,18 +12,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 driver = webdriver.Chrome()
-href = "https://leetcode.com/problems/add-two-numbers/submissions/"
-
-
-# driver.get(href)
+href = "https://leetcode.com/problems/add-two-numbers"
 driver.get(href)
-# driver.implicitly_wait(2)
+soup = BeautifulSoup(driver.page_source, features="html.parser")
+
+problem = "```\ns"
+
+for x in soup.find_all("div", class_="content__u3I1 question-content__JfgR"):
+    problem+= x.text + "\n"
+problem += "```"
+
+print(problem)
+
+driver.find_element_by_link_text("Submissions").click()
+
 driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
 driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(environ.get("LEETCODE_EMAIL"))
 driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(environ.get("LEETCODE_PASS"))
 driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
 
-soup = BeautifulSoup(driver.page_source, features="html.parser")
+# soup = BeautifulSoup(driver.page_source, features="html.parser")
 test = soup.find_all('span', {"role" : "presentation"})
 
 template = ""
@@ -31,4 +39,7 @@ for x in test:
     template += x.text + "\n"
 
 print(template)
+
+
+
 driver.close()

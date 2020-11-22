@@ -146,18 +146,27 @@ async def information(message, commands):
     await message.channel.send(formString)    
 
 
-async def template(message, commands):
-    """Returns the template for a questios given a link, need to work on optional param language"""
+async def description(message, commands):
+    """Returns the description for a questios given a link, need to work on optional param language
+        Prbably should add a check to make sure its a leetcode url"""
     if not url(commands[1]):
         await message.channel.send("Sorry this is not a valid url")
         return
     print("Template function was called with the following parameters:", commands)
     
     driver = setupBroswer()
-    if(commands[1][-1] == "/"):
-        driver.get(commands[1] + "submissions/")
-    else:
-        driver.get(commands[1] + "/submissions/")
+    driver.get(commands[1])
+
+    soup = BeautifulSoup(driver.page_source, features="html.parser")
+
+    problem = "```\ns"
+    for x in soup.find_all("div", class_="content__u3I1 question-content__JfgR"):
+        problem+= x.text + "\n"
+    problem += "```"
+
+    await message.channel.send(problem)
+    
+    driver.find_element_by_link_text("Submissions").click() 
 
     driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
     driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(os.environ.get("LEETCODE_EMAIL"))
@@ -167,7 +176,7 @@ async def template(message, commands):
     soup = BeautifulSoup(driver.page_source, features="html.parser")
     test = soup.find_all('span', {"role" : "presentation"})
 
-    template = "```\n"
+    template = "```cpp\n"
     for x in test:
         template += x.text + "\n"
 
@@ -205,11 +214,11 @@ COMMANDS = {
         "optional_params": 0,
         "total_params": 1
     },
-    "template": {
+    "description": {
         "help_message": "Returns the template for a question given a link",
         "help_note": "Link that is meant to be looked at",
         'usage': "!questions template <link>",
-        "function": template,
+        "function": description,
         "required_params": 1,
         "optional_params": 0,
         "total_params": 1
