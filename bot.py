@@ -6,10 +6,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from random import randint
 from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery
+from utility.messageDict import getLanguageCode, checkLanguage
 from validators import url
 import psycopg2
 import os
@@ -152,6 +154,10 @@ async def description(message, commands):
     if not url(commands[1]):
         await message.channel.send("Sorry this is not a valid url")
         return
+    if len(commands) == 2 and not checkLanguage(commands[2]):
+        await message.channel.send("Sorry this is not a valid language")
+        return
+    
     print("Template function was called with the following parameters:", commands)
     
     driver = setupBroswer()
@@ -166,18 +172,22 @@ async def description(message, commands):
     problem += "```"
 
     await message.channel.send(problem)
-    
-    driver.find_element_by_link_text("Submissions").click() 
 
-    driver.find_element_by_xpath('//button[@class="btn__1eiM btn-lg__2g-N "]').click()
-    driver.find_element_by_xpath('// *[ @ id = "id_login"]').send_keys(os.environ.get("LEETCODE_EMAIL"))
-    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(os.environ.get("LEETCODE_PASS"))
-    driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
+    language = "Python3" if len(commands) <2 else commands[2].title()
+    xpath = f'//li[@data-cy=\"lang-select-{language.title()}\"]'
+
+    driver.find_element_by_xpath('//span[@class="ant-select-arrow"]').click()
+
+    element = driver.find_element_by_xpath(xpath)
+    actions = ActionChains(driver)
+    actions.move_to_element(element).perform()
+
+    driver.find_element_by_xpath(xpath).click()
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
     code_block = soup.find_all('span', {"role" : "presentation"})
 
-    template = "```cpp\n"
+    template = f"```{getLanguageCode(language)}\n"
     for x in code_block:
         template += x.text + "\n"
     template += "```"
@@ -217,12 +227,12 @@ COMMANDS = {
     },
     "description": {
         "help_message": "Returns the template for a question given a link",
-        "help_note": "Link that is meant to be looked at",
-        'usage': "!questions description <link>",
+        "help_note": "Link that is meant to be looked at, language that the template should be in",
+        'usage': "!questions description <link> <language>",
         "function": description,
         "required_params": 1,
-        "optional_params": 0,
-        "total_params": 1
+        "optional_params": 1,
+        "total_params": 2
     }
 }
 
