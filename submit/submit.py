@@ -12,14 +12,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 driver = webdriver.Chrome()
-href = "https://leetcode.com/problems/add-two-numbers"
+href = "https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum"
 driver.get(href)
 soup = BeautifulSoup(driver.page_source, features="html.parser")
 
-problem = "```\ns"
+problem = "```\n"
 
+problem = "```\n"
 for x in soup.find_all("div", class_="content__u3I1 question-content__JfgR"):
-    problem+= x.text + "\n"
+    problem += x.text + "\n"
 problem += "```"
 
 print(problem)

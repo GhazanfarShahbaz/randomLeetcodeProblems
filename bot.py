@@ -155,13 +155,14 @@ async def description(message, commands):
     print("Template function was called with the following parameters:", commands)
     
     driver = setupBroswer()
+    print(commands[1])
     driver.get(commands[1])
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
 
-    problem = "```\ns"
+    problem = "```\n"
     for x in soup.find_all("div", class_="content__u3I1 question-content__JfgR"):
-        problem+= x.text + "\n"
+        problem += x.text + "\n"
     problem += "```"
 
     await message.channel.send(problem)
@@ -174,13 +175,13 @@ async def description(message, commands):
     driver.find_element_by_xpath('// *[ @ id = "id_password"]').send_keys(Keys.ENTER)
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    test = soup.find_all('span', {"role" : "presentation"})
+    code_block = soup.find_all('span', {"role" : "presentation"})
 
     template = "```cpp\n"
-    for x in test:
+    for x in code_block:
         template += x.text + "\n"
-
     template += "```"
+
     driver.close()
 
     await message.channel.send(template)
@@ -217,7 +218,7 @@ COMMANDS = {
     "description": {
         "help_message": "Returns the template for a question given a link",
         "help_note": "Link that is meant to be looked at",
-        'usage': "!questions template <link>",
+        'usage': "!questions description <link>",
         "function": description,
         "required_params": 1,
         "optional_params": 0,
