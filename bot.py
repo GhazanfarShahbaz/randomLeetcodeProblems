@@ -257,7 +257,7 @@ COMMANDS = {
         "total_params": 2
     },
     "euler": {
-        "help_message": "Returns a link to a question from the euler project".
+        "help_message": "Returns a link to a question from the euler project",
         "help_note": "No params needed",
         "usage": "!questions euler",
         "function": euler,
