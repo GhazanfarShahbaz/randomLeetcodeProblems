@@ -227,7 +227,7 @@ async def codechef(message, commands):
     cursor.execute("Select Count(*) from codechef")
     count = cursor.fetchall()[0][0]
     cursor.execute("Select * from codechef")
-    link = cursor.fetchall()[randint(1,count)][3]
+    link = cursor.fetchall()[randint(1,count)][2]
     connection.close()
     await message.channel.send(link)
 
