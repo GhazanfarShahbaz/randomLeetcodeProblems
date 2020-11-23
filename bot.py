@@ -221,6 +221,17 @@ async def euler(message, commands):
     await message.channel.send(f"https://projecteuler.net/problem={randint(1,eulerCount)}")
 
 
+async def codechef(message, commands):
+    """Returns a link to a question from codechef, will be adding other comands"""
+    connection, cursor = createConnection()
+    cursor.execute("Select Count(*) from codechef")
+    count = cursor.fetchall()[0][0]
+    cursor.execute("Select * from codechef")
+    link = cursor.fetchall()[randint(1,count)][3]
+    connection.close()
+    await message.channel.send(link)
+
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
