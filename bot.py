@@ -215,7 +215,7 @@ async def description(message, commands):
 
 
 async def euler(message, commands):
-    numberOfEulerProblem()
+    numberOfEulerProblems()
     await message.channel.send(f"https://projecteuler.net/problem={randint(1,eulerCount)}")
 
 
