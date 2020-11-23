@@ -276,7 +276,16 @@ COMMANDS = {
         "function": euler,
         "required_params": 0,
         "optional_params": 0,
-        "total_params": 2
+        "total_params": 0
+    },
+    "codechef": {
+        "help_message": "Returns a link to a question from codechef",
+        "help_note": "No params needed",
+        "usage": "!questions codechef",
+        "function": codechef,
+        "required_params": 0,
+        "optional_params": 0,
+        "total_params": 0
     }
 }
 
