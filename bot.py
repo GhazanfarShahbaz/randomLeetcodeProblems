@@ -10,6 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from random import randint
+from datetime import datetime
 from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery
 from utility.messageDict import getLanguageCode, checkLanguage
 from validators import url
@@ -18,7 +19,8 @@ import os
 
 
 client = discord.Client()
-
+eulerCount = 735
+lastUpdated = 11
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
@@ -36,6 +38,21 @@ def setupBroswer():
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return driver
+
+def numberOfEulerProblems():
+    """Checks to the number of euler problems"""
+    currentMonth = datetime.now().month
+    if currentMonth != lastUpdated:
+        link = "https://projecteuler.net/recent"
+        response = requests.get(link)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        val = 0
+        try:
+            val = soup.find('td', class_="id_column").text
+        except:
+            return
+        eulerCount = val
+        lastUpdated = currentMonth
 
 
 async def helpUser(message, commands):
@@ -197,6 +214,11 @@ async def description(message, commands):
     await message.channel.send(template)
 
 
+async def euler(message, commands):
+    numberOfEulerProblem()
+    await message.channel.send(f"https://projecteuler.net/problem={randint(1,eulerCount)}")
+
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
@@ -233,9 +255,17 @@ COMMANDS = {
         "required_params": 1,
         "optional_params": 1,
         "total_params": 2
+    },
+    "euler": {
+        "help_message": "Returns a link to a question from the euler project".
+        "help_note": "No params needed",
+        "usage": "!questions euler",
+        "function": euler,
+        "required_params": 0,
+        "optional_params": 0,
+        "total_params": 2
     }
 }
-
 
 
 @client.event
