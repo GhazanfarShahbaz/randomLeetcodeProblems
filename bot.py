@@ -42,6 +42,7 @@ def setupBroswer():
 def numberOfEulerProblems():
     """Checks to the number of euler problems"""
     currentMonth = datetime.now().month
+    global lastUpdated
     if currentMonth != lastUpdated:
         link = "https://projecteuler.net/recent"
         response = requests.get(link)
@@ -51,6 +52,7 @@ def numberOfEulerProblems():
             val = soup.find('td', class_="id_column").text
         except:
             return
+        global eulerCount
         eulerCount = val
         lastUpdated = currentMonth
 
