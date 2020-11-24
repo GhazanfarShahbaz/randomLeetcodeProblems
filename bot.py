@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from random import randint
 from datetime import datetime
-from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery
+from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty
 from utility.messageDict import getLanguageCode, checkLanguage
 from validators import url
 import psycopg2
@@ -223,11 +223,18 @@ async def euler(message, commands):
 
 async def codechef(message, commands):
     """Returns a link to a question from codechef, will be adding other comands"""
+    if len(commands) == 2 and not allowedCodeChefDifficulty(commands[1]):
+        await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenger```") 
+        return
+
     connection, cursor = createConnection()
-    cursor.execute("Select Count(*) from codechef")
+    script = "" if len(commands) == 1 else f" where difficulty = \'{commands[1]}\' "
+
+    cursor.execute("Select Count(*) from codechef" + script)
     count = cursor.fetchall()[0][0]
-    cursor.execute("Select * from codechef")
+    cursor.execute("Select * from codechef" + script)
     link = cursor.fetchall()[randint(1,count)][2]
+
     connection.close()
     await message.channel.send(link)
 
@@ -280,12 +287,12 @@ COMMANDS = {
     },
     "codechef": {
         "help_message": "Returns a link to a question from codechef",
-        "help_note": "No params needed",
-        "usage": "!questions codechef",
+        "help_note": "Optional param difficulty: pick from the following beginner, easy, medium, hard, challenge ",
+        "usage": "!questions codechef <difficulty>",
         "function": codechef,
         "required_params": 0,
-        "optional_params": 0,
-        "total_params": 0
+        "optional_params": 1,
+        "total_params": 1
     }
 }
 

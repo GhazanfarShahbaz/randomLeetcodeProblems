@@ -4,6 +4,8 @@
 * !questions random <difficulty> <tag> : picks a random question and returns its link, difficulty, tag and subscription are optional parameters
 * !questions information <identifier> : returns information for a problem by number or link
 * !questions description <link> : returns the description and code template for a problem by its link
+* !questions euler : returns a link to an euler problem
+* !questions codechef : returns a link to a codechef problem
 ## Checklist
 * ~~Webscrape data and place it into a csv~~
 * ~~Place data into a database~~

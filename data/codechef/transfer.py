@@ -3,7 +3,7 @@ import psycopg2
 hostname = ''
 username = ''
 password = ''
-database = 'd74uinm10v45m9'
+database = ''
 
 myConnection = psycopg2.connect( host=hostname, user=username, password=password, dbname=database )
 
