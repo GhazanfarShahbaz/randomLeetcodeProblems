@@ -441,6 +441,6 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
-    updateLeetcodeData(message)
+    await updateLeetcodeData(message)
 
 client.run(os.environ["TOKEN"])
