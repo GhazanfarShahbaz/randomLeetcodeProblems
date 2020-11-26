@@ -14,6 +14,7 @@ from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubs
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
 from validators import url
+import requests
 import psycopg2
 import os
 
