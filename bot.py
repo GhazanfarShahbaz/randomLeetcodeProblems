@@ -179,6 +179,17 @@ async def description(message, commands):
         await message.channel.send("Sorry this is not a valid language")
         return
     
+    connection, cursor = createConnection()
+
+    cursor.execute("Select subscription from problems where links = %s". (commands[1].))
+    data = cursor.fetchone()[0]
+    connection.close()
+
+    if(data):
+        await message.channel.send("Sorry this question requires a subscription")
+        return
+
+
     print("Template function was called with the following parameters:", commands)
     
     driver = setupBroswer()
