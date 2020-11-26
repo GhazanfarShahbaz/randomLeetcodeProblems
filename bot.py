@@ -25,7 +25,7 @@ import os
 client = discord.Client()
 eulerCount = 735
 eulerlastUpdated = -1
-leetcodelastUpdated = -1
+leetcodelastUpdated = 11
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
@@ -52,12 +52,14 @@ def numberOfEulerProblems():
         link = "https://projecteuler.net/recent"
         response = requests.get(link)
         soup = BeautifulSoup(response.content, 'html.parser')
-        val = 0
+        global eulerCount
+        val = eulerCount
         try:
             val = soup.find('td', class_="id_column").text
+            val = int(val)
         except:
             return
-        global eulerCount
+
         eulerCount = val
         eulerlastUpdated = currentMonth
 
