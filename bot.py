@@ -186,7 +186,7 @@ async def description(message, commands):
     connection.close()
 
     if(data):
-        await message.channel.send("Sorry this question requires a subscription")
+        await message.channel.send("```Sorry this question requires a subscription```")
         return
 
 
@@ -333,17 +333,5 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
-
-
-
-@tasks.loop(seconds=10)
-async def dailyQuestion():
-    connection, cursor = createConnection()
-    randomNumber = randint(1,1659)
-    cursor.execute('SELECT * from problems WHERE number = %s', (randomNumber,))
-    link = cursor.fetchall()[0][3]
-    connection.close()
-    await client.get_channel(758441730701131805).send(f"```Daily Question: \n {link}```")
-
 
 client.run(os.environ["TOKEN"])
