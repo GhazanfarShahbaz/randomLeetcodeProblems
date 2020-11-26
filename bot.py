@@ -28,9 +28,9 @@ leetcodelastUpdated = -1
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
-    myConnection = psycopg2.connect(host=os.environ.get('HOSTNAME'), user=os.environ.get('USERNAME'), password=os.environ.get('DB_PASSWORD'), dbname=os.environ.get('DB_NAME'))
-    cursor = myConnection.cursor()
-    return myConnection, cursor
+    DATABASE_URL = os.environ['DATABASE_URL']
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    return conn, conn.cursor
 
 
 def setupBroswer():
@@ -65,8 +65,8 @@ async def updateLeetcodeData(message):
     currentMonth = datetime.now().month
     global leetcodelastUpdated
     if currentMonth != leetcodelastUpdated:
-        await message.channel.send("Updating, this might take awhile")
         leetcodelastUpdated = currentMonth
+        await message.channel.send("Updating, this might take awhile")
         connection, cursor = createConnection()
         cursor.execute("Select Count(*) from problems")
         totalCount = cursor.fetchone()[0]
@@ -476,8 +476,7 @@ COMMANDS = {
 
 
 @client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+async def on_ready():å
 
 
 @client.event
@@ -497,6 +496,6 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
-    await updateLeetcodeData(message)
+                await updateLeetcodeData(message)
 
 client.run(os.environ["TOKEN"])
