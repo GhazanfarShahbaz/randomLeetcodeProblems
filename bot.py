@@ -158,7 +158,7 @@ async def information(message, commands):
         elif i > 5:
             formString += f", {colNames[i]}"
         else:
-            formString += f"{colNames[i]}: {data[i]}\n"
+            formString += f"{colNames[i].title()}: {data[i]}\n"
 
     if not foundFirstType:
         formString += "Problem Tags: None"
@@ -187,7 +187,7 @@ async def description(message, commands):
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
 
-    problem = "```\n"
+    problem = "```ts\n"
     for x in soup.find_all("div", class_="content__u3I1 question-content__JfgR"):
         problem += x.text + "\n"
     problem += "```"
