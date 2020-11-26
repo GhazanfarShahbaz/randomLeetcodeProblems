@@ -5,12 +5,14 @@
     - https://github.com/heroku/heroku-buildpack-google-chrome
     - https://github.com/heroku/heroku-buildpack-chromedriver
     - heroku/python
+* Make sure to set up a heroku database
+    - Go to configure addons -> Heroku Postgres
 * Follow the enviornment sample and input the data into heroku config vars
     - CHROMEDRIVER_PATH = /app/.chromedriver/bin/chromedriver
     - GOOGLE_CHROME_BIN = /app/.apt/usr/bin/google-chrome
 * Make sure to get a token from discord for the bot
 * You should be able to deploy now
-* Once deployed run any function the bot should able to prefill the database on its own, give that the correct tables have been made
+* Once deployed run any function the bot should able to prefill the database on its own, given that the correct tables have been made
 
 ## Current Functions
 * !questions help : lists all commands
