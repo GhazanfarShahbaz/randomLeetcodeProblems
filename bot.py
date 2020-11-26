@@ -17,6 +17,8 @@ from validators import url
 import psycopg2
 import os
 
+# googlesheets -> gspread -> pandas
+
 
 client = discord.Client()
 eulerCount = 735
@@ -132,7 +134,7 @@ async def information(message, commands):
         cursor.execute("select * from problems where number = %s", (value,))
     elif url(commands[1]):
         thisUrl = commands[1]
-        cursor.execute("select * from problems where link = %s", (thisUrl))
+        cursor.execute("select * from problems where link = %s", (thisUrl,))
     else:
         message.channel.send("Sorry, this is not a valid parameter. You should supply either the problem number or its link")
         connection.close()
