@@ -181,7 +181,8 @@ async def description(message, commands):
     
     connection, cursor = createConnection()
 
-    cursor.execute("Select subscription from problems where links = %s", (commands[1],))
+    cursor.execute("Select subscription from problems where link = %s", (commands[1],))
+    print(data)
     data = cursor.fetchone()[0]
     connection.close()
 
