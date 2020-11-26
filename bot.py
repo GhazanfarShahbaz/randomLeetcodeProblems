@@ -215,7 +215,6 @@ async def randomProblem(message, commands):
     params.append(subscription) if subscription.lower() != "any" else None
 
     script = "where " +params[0] if params else ""
-    buffer = 1
 
     for x in range(1, len(params)):
         script += f" and {params[x]} "
