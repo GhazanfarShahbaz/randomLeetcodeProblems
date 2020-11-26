@@ -12,16 +12,20 @@ from random import randint
 from datetime import datetime
 from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty
 from utility.messageDict import getLanguageCode, checkLanguage
+from utility.tags import getTags
 from validators import url
 import psycopg2
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # googlesheets -> gspread -> pandas
 
 
 client = discord.Client()
 eulerCount = 735
-lastUpdated = 11
+eulerlastUpdated = -1
+leetcodelastUpdated = -1
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
@@ -43,8 +47,8 @@ def setupBroswer():
 def numberOfEulerProblems():
     """Checks to the number of euler problems"""
     currentMonth = datetime.now().month
-    global lastUpdated
-    if currentMonth != lastUpdated:
+    global eulerlastUpdated
+    if currentMonth != eulerlastUpdated:
         link = "https://projecteuler.net/recent"
         response = requests.get(link)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -55,7 +59,113 @@ def numberOfEulerProblems():
             return
         global eulerCount
         eulerCount = val
-        lastUpdated = currentMonth
+        eulerlastUpdated = currentMonth
+
+async def updateLeetcodeData(message):
+    """Updates the leetcode problems"""
+    currentMonth = datetime.now().month
+    global leetcodelastUpdated
+    if currentMonth != leetcodelastUpdated:
+        await message.channel.send("Updating, this might take awhile")
+        leetcodelastUpdated = currentMonth
+        connection, cursor = createConnection()
+        cursor.execute("Select Count(*) from problems")
+        totalCount = cursor.fetchone()[0]
+        connection.close()
+
+        driver = setupBroswer()
+
+        driver.get("https://leetcode.com/problemset/all/")
+        driver.find_element_by_xpath('//select[@class = "form-control"]').click()
+        select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+        select.select_by_visible_text('all')
+
+        data = {}
+
+        start = True
+        soup = BeautifulSoup(driver.page_source, features="html.parser")
+        
+        for trTags in soup.find_all("tr"):
+            if(start):
+                start = False
+                continue
+            else:
+                parser = 0
+                currentNumber = 0
+                for row in trTags.find_all('td'):
+                    if parser == 1:
+                        currentNumber = row.text.strip()
+                        currentNumber = int(currentNumber)
+                        if(currentNumber < totalCount):
+                            break 
+                        data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
+                    elif parser == 2:
+                        val = ""
+                        for x in row.text.strip():
+                            if x.isalnum() or x==" ":       
+                                val +=x
+                            else:
+                                val += "_"
+
+                        data[currentNumber]["name"] = val
+                        data[currentNumber]["subscription"] = False if len(row.findChild().contents) == 2 else True
+                        data[currentNumber]["link"] = f"https://leetcode.com{row.findChild().findChild()['href']}"
+                    elif parser == 4:
+                        data[currentNumber]["acceptance"] = row.text[:len(row.text)-1]
+                    elif parser == 5:
+                        data[currentNumber]["difficulty"] = row.text
+                        break
+                    parser += 1 
+
+        if not data:
+            await message.channel.send("Up to date")
+            driver.close()
+            return
+
+        tag_links, corr_tags = getTags()
+
+        for tag, link in tag_links.items():
+            driver.close()
+            driver = setupBroswer()
+            driver.get(link)
+            try:
+                Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+            except:
+                pass
+            try:
+                driver.find_element_by_xpath('//select[@class = "form-control"]').click()
+                select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+                select.select_by_visible_text('all')
+            except:
+                pass
+
+            start = True
+            soup = BeautifulSoup(driver.page_source, features="html.parser")
+
+            for trTags in soup.find_all("tr"):
+                if(start):
+                    start = False
+                    continue
+                else:
+                    parser = 0
+                    for row in trTags.find_all('td'):
+                        if parser == 1:
+                            currentNumber = row.text.strip()
+                            currentNumber = int(currentNumber)
+                            if currentNumber in data.keys():
+                                data[currentNumber][corr_tags[tag]] = True
+                        parser += 1 
+        driver.close()
+        connection, cursor = createConnection()
+        for x, y in data.items():
+            cursor.execute("Insert into problems (number, name, subscription, link, acceptance, difficulty, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find) Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, )", (x, y['name'], y['subscription'], y['link'], y['acceptance'], y['difficulty'], y['arrays'], y['backtracking'], y['binary_indexed_tree'], y['binary_search'], y['binary_search_tree'], y['bit_manipulation'], y['brain_teaser'], y['breadth_first_search'], y['depth_first_search'], y['design'], y['divide_and_conquer'], y['dynamic_programming'], y['geometry'], y['graph'], y['greedy'], y['hash_table'], y['heap'], y['line_sweep'], y['linked_lists'], y['math'], y['memoization'], y['minimax'], y['ordered_map'], y['queue'], y['random'], y['recursion'], y['rejection_sampling'], y['reservoir_sampling'], y['rolling_hash'], y['segment_tree'], y['sliding_window'], y['sort'], y['stack'], y['string'], y['suffix_array'], y['topological_sort'], y['tree'], y['trie'], y['two_pointers'], y['union_find'],))
+
+        connection.commit()
+        connection.close()
+        await message.channel.send("Up to date")
+
+
+    
 
 
 async def helpUser(message, commands):
@@ -333,5 +443,6 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
+    updateLeetcodeData(message)
 
 client.run(os.environ["TOKEN"])
