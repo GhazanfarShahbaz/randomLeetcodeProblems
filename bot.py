@@ -3,8 +3,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -139,6 +138,7 @@ async def information(message, commands):
         message.channel.send("Sorry, this is not a valid parameter. You should supply either the problem number or its link")
         connection.close()
         return
+
     data = cursor.fetchone()
 
     if not data:
@@ -182,7 +182,6 @@ async def description(message, commands):
     connection, cursor = createConnection()
 
     cursor.execute("Select subscription from problems where link = %s", (commands[1],))
-    print(data)
     data = cursor.fetchone()[0]
     connection.close()
 
