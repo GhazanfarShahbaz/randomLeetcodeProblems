@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks, checkForEvents
 from discord.ext.commands import Bot
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -494,7 +494,7 @@ async def daily(self):
     currentTime = datetime.now()
     if currentTime.hour == 18:
         channel = await client.get_channel(778009190035226634)
-    
+
         connection, cursor = createConnection()
 
         cursor.execute("Select Count(*) from problems")
