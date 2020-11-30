@@ -514,8 +514,9 @@ async def on_message(message):
                 await updateLeetcodeData(message)
 
 
-@tasks.loop(minutes=15)
+@tasks.loop(minutes=5)
 async def daily(self):
+    print("TEST")
     currentTime = datetime.now()
     if currentTime.hour == 18 and currentTime.minute <= 30:
         channel = await client.get_channel(778009190035226634)
