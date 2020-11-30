@@ -489,7 +489,7 @@ COMMANDS = {
 }
 
 @tasks.loop(minutes=5)
-async def daily():
+async def daily(self):
     print("TEST")
     currentTime = datetime.now()
     if currentTime.hour == 18 and currentTime.minute <= 45:
@@ -507,7 +507,7 @@ async def daily():
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     print("Starting daily now")
-    daily.start()
+    self.daily.start()
 
 
 @client.event
