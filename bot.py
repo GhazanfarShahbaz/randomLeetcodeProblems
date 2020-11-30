@@ -489,7 +489,7 @@ COMMANDS = {
 }
 
 @tasks.loop(minutes=5)
-async def daily(self):
+async def daily():
     print("TEST")
     currentTime = datetime.now()
     if currentTime.hour == 18 and currentTime.minute <= 45:
