@@ -514,7 +514,7 @@ async def on_message(message):
                 await updateLeetcodeData(message)
 
 
-@tasks.loop(min=15)
+@tasks.loop(minutes=15)
 async def daily(self):
     currentTime = datetime.now()
     if currentTime.hour == 18 and currentTime.minute <= 30:
