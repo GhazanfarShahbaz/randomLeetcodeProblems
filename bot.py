@@ -257,7 +257,7 @@ async def randomProblem(message, commands):
     if len(commands) >=3 and not allowedTags(commands[2]):
         await message.channel.send("```You can only pick from these tags: any, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
-    if len(commands) == 4 and not allowedSubscription(commands[3]):
+    if len(commands) >= 4 and not allowedSubscription(commands[3]):
         await message.channel.send("```Subscription should be true, false or any```")
         return
 
@@ -288,7 +288,18 @@ async def randomProblem(message, commands):
     cursor.execute("Select * from problems " + script)
     link = cursor.fetchall()[randint(1,count)][3]
     connection.close()
+
     await message.channel.send(link)
+
+    if(len(commands) == 5):
+        if commands[4] == "i":
+            await information(message, [None, link])
+        elif commands[4] == "d":
+            await information(message, [None, [None, link]])
+        elif commands[4] == 'id' or commands[4] == "di":
+            await information(message, [None, link])
+            await information(message, [None, [None, link]])
+
 
 
 async def information(message, commands):
@@ -433,11 +444,11 @@ COMMANDS = {
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted and are optional",
         "help_note": "Difficulty has 3 possible parameters: Easy, medium and hard, tag has a bit more and will be listed if you call an unexisting tag",
-        "usage": "!questions random <difficulty> <tag> <subscription>",
+        "usage": "!questions random <difficulty> <tag> <subscription> <extras>",
         "function": randomProblem,
         "required_params": 0,
-        "optional_params": 3,
-        "total_params": 3
+        "optional_params": 4,
+        "total_params": 4
     },
     "information": {
         "help_message": "Spits out information for a given question number or link",
