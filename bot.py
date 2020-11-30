@@ -443,7 +443,7 @@ COMMANDS = {
     },
     "random": {
         "help_message": "Spits out a random leetcode problem, difficulty and tag can be adjusted and are optional",
-        "help_note": "Difficulty has 3 possible parameters: Easy, medium and hard, tag has a bit more and will be listed if you call an unexisting tag",
+        "help_note": "Difficulty has 4 possible parameters: Easy, medium and hard, tag has a bit more and will be listed if you call an unexisting tags, subscription is yes/no and extras is either i, d id or di",
         "usage": "!questions random <difficulty> <tag> <subscription> <extras>",
         "function": randomProblem,
         "required_params": 0,
