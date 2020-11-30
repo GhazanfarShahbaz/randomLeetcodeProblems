@@ -488,11 +488,16 @@ COMMANDS = {
     }
 }
 
-@tasks.loop(minutes=5)
-async def daily(self):
-    print("TEST")
+
+@client.event
+async def on_ready():
+    print('We have logged in as {0.user}'.format(client))
+    daily.start()
+
+@tasks.loop(minutes=15)
+async def daily():
     currentTime = datetime.now()
-    if currentTime.hour == 18:
+    if currentTime.hour <= 20:
         channel = await client.get_channel(778009190035226634)
 
         connection, cursor = createConnection()
@@ -510,11 +515,6 @@ async def daily(self):
 async def beforeStartLoop():
     await client.wait_until_ready()
 
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-    print("Starting daily now")
-    # daily.start()
 
 @client.event
 async def on_message(message):
