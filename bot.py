@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks, checkForEvents
+from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -506,7 +506,7 @@ async def daily(self):
         connection.close()
         await channel.send(link)
 
-@checkForEvents.before_loop
+@daily.before_loop
 async def beforeStartLoop():
     await client.wait_until_ready()
 
