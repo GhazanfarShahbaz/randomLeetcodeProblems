@@ -492,23 +492,29 @@ COMMANDS = {
 async def daily(self):
     print("TEST")
     currentTime = datetime.now()
-    if currentTime.hour == 18 and currentTime.minute <= 45:
+    if currentTime.hour == 18:
         channel = await client.get_channel(778009190035226634)
+    
         connection, cursor = createConnection()
+
         cursor.execute("Select Count(*) from problems")
         count = cursor.fetchall()[0][0]
 
         cursor.execute("Select * from problems")
         link = cursor.fetchall()[randint(1, count)][3]
+
+        connection.close()
         await channel.send(link)
 
+@checkForEvents.before_loop
+async def beforeStartLoop():
+    await client.wait_until_ready()
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     print("Starting daily now")
-    self.daily.start()
-
+    # daily.start()
 
 @client.event
 async def on_message(message):
