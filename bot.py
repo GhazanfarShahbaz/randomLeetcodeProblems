@@ -488,10 +488,26 @@ COMMANDS = {
     }
 }
 
+@tasks.loop(minutes=5)
+async def daily(self):
+    print("TEST")
+    currentTime = datetime.now()
+    if currentTime.hour == 18 and currentTime.minute <= 45:
+        channel = await client.get_channel(778009190035226634)
+        connection, cursor = createConnection()
+        cursor.execute("Select Count(*) from problems")
+        count = cursor.fetchall()[0][0]
+
+        cursor.execute("Select * from problems")
+        link = cursor.fetchall()[randint(1, count)][3]
+        await channel.send(link)
+
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    print("Starting daily now")
+    daily.start()
 
 
 @client.event
@@ -512,21 +528,6 @@ async def on_message(message):
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
                 await updateLeetcodeData(message)
-
-
-@tasks.loop(minutes=5)
-async def daily(self):
-    print("TEST")
-    currentTime = datetime.now()
-    if currentTime.hour == 18 and currentTime.minute <= 30:
-        channel = await client.get_channel(778009190035226634)
-        connection, cursor = createConnection()
-        cursor.execute("Select Count(*) from problems")
-        count = cursor.fetchall()[0][0]
-
-        cursor.execute("Select * from problems")
-        link = cursor.fetchall()[randint(1, count)][3]
-        await channel.send(link)
 
 
 client.run(os.environ["TOKEN"])
