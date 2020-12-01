@@ -268,7 +268,7 @@ async def randomProblem(message, commands):
     params.append(tag) if tag.lower() != "any" else None
     params.append(subscription) if subscription.lower() != "any" else None
 
-    script = "where " +params[0] if params else ""
+    script = "where " + params[0] if params else ""
 
     for x in range(1, len(params)):
         script += f" and {params[x]} "
@@ -288,13 +288,17 @@ async def randomProblem(message, commands):
     await message.channel.send(link)
 
     if(len(commands) == 5):
-        if commands[4] == "i":
-            await information(message, [None, link])
-        elif commands[4] == "d":
+        if commands[4] == "d":
+            print(url(link))
             await description(message, [None, link])
-        elif commands[4] == 'id' or commands[4] == "di":
-            await information(message, [None, link])
-            await information(message, [None, link])
+    # if(len(commands) == 5):
+    #     if commands[4] == "i":
+    #         await information(message, [None, link])
+    #     elif commands[4] == "d":
+    #         await description(message, [None, link])
+    #     elif commands[4] == 'id' or commands[4] == "di":
+    #         await information(message, [None, link])
+    #         await information(message, [None, link])
 
 
 
@@ -309,7 +313,7 @@ async def information(message, commands):
         thisUrl = commands[1]
         cursor.execute("select * from problems where link = %s", (thisUrl,))
     else:
-        message.channel.send("Sorry, this is not a valid parameter. You should supply either the problem number or its link")
+        await message.channel.send("Sorry, this is not a valid parameter. You should supply either the problem number or its link")
         connection.close()
         return
 
