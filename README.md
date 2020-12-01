@@ -21,14 +21,16 @@
 * !questions description <link> : returns the description and code template for a problem by its link
 * !questions euler : returns a link to an euler problem
 * !questions codechef : returns a link to a codechef problem
+* Self updates the database for euler and leetcode problems each month
+* Sends a daily leetcode question
 
 ## Checklist
-* ~~Webscrape data and place it into a csv~~
-* ~~Place data into a database~~
+* ~~Webscrape data and place it into a csv~~ _Finished_
+* ~~Place data into a database~~ _Finished_
 * Create bot functions - _In Progress_
 
 ## Future Functionalities and Functions
-* Function to post a question each day 
+* ~~Function to post a question each day~~ 
 * Save questions that each person in the server has completed
 * Submit answers through message
 
