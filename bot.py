@@ -24,8 +24,7 @@ import os
 
 client = discord.Client()
 eulerCount = 735
-eulerlastUpdated = -1
-leetcodelastUpdated = 11
+lastUpdated = -1
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
@@ -44,184 +43,175 @@ def setupBroswer():
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return driver
 
+
 def numberOfEulerProblems():
     """Checks to the number of euler problems"""
-    currentMonth = datetime.now().month
-    global eulerlastUpdated
-    if currentMonth != eulerlastUpdated:
-        link = "https://projecteuler.net/recent"
-        response = requests.get(link)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        global eulerCount
-        val = eulerCount
-        try:
-            val = soup.find('td', class_="id_column").text
-            val = int(val)
-        except:
-            return
+    link = "https://projecteuler.net/recent"
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    global eulerCount
+    val = eulerCount
+    try:
+        val = soup.find('td', class_="id_column").text
+        val = int(val)
+    except:
+        return
 
-        eulerCount = val
-        eulerlastUpdated = currentMonth
+    eulerCount = val
 
-async def updateLeetcodeData(message):
+
+async def updateLeetcodeData():
     """Updates the leetcode problems"""
-    currentMonth = datetime.now().month
-    global leetcodelastUpdated
-    if currentMonth != leetcodelastUpdated:
-        leetcodelastUpdated = currentMonth
-        await message.channel.send("Updating, this might take awhile")
-        connection, cursor = createConnection()
-        cursor.execute("Select Count(*) from problems")
-        totalCount = cursor.fetchone()[0]
-        connection.close()
 
+    connection, cursor = createConnection()
+    cursor.execute("Select Count(*) from problems")
+    totalCount = cursor.fetchone()[0]
+    connection.close()
+
+    driver = setupBroswer()
+
+    driver.get("https://leetcode.com/problemset/all/")
+    driver.find_element_by_xpath('//select[@class = "form-control"]').click()
+    select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+    select.select_by_visible_text('all')
+
+    data = {}
+
+    start = True
+    soup = BeautifulSoup(driver.page_source, features="html.parser")
+    
+    for trTags in soup.find_all("tr"):
+        if(start):
+            start = False
+            continue
+        else:
+            parser = 0
+            currentNumber = 0
+            for row in trTags.find_all('td'):
+                if parser == 1:
+                    currentNumber = row.text.strip()
+                    currentNumber = int(currentNumber)
+                    if(currentNumber < totalCount):
+                        break 
+                    data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
+                elif parser == 2:
+                    val = ""
+                    for x in row.text.strip():
+                        if x.isalnum() or x==" ":       
+                            val +=x
+                        else:
+                            val += "_"
+
+                    data[currentNumber]["name"] = val
+                    data[currentNumber]["subscription"] = False if len(row.findChild().contents) == 2 else True
+                    data[currentNumber]["link"] = f"https://leetcode.com{row.findChild().findChild()['href']}"
+                elif parser == 4:
+                    data[currentNumber]["acceptance"] = row.text[:len(row.text)-1]
+                elif parser == 5:
+                    data[currentNumber]["difficulty"] = row.text
+                    break
+                parser += 1 
+
+    if not data:
+        driver.close()
+        return
+
+    tag_links, corr_tags = getTags()
+
+    for tag, link in tag_links.items():
+        driver.close()
         driver = setupBroswer()
-
-        driver.get("https://leetcode.com/problemset/all/")
-        driver.find_element_by_xpath('//select[@class = "form-control"]').click()
-        select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
-        select.select_by_visible_text('all')
-
-        data = {}
+        driver.get(link)
+        try:
+            Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+        except:
+            pass
+        try:
+            driver.find_element_by_xpath('//select[@class = "form-control"]').click()
+            select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
+            select.select_by_visible_text('all')
+        except:
+            pass
 
         start = True
         soup = BeautifulSoup(driver.page_source, features="html.parser")
-        
+
         for trTags in soup.find_all("tr"):
             if(start):
                 start = False
                 continue
             else:
                 parser = 0
-                currentNumber = 0
                 for row in trTags.find_all('td'):
                     if parser == 1:
                         currentNumber = row.text.strip()
                         currentNumber = int(currentNumber)
-                        if(currentNumber < totalCount):
-                            break 
-                        data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
-                    elif parser == 2:
-                        val = ""
-                        for x in row.text.strip():
-                            if x.isalnum() or x==" ":       
-                                val +=x
-                            else:
-                                val += "_"
-
-                        data[currentNumber]["name"] = val
-                        data[currentNumber]["subscription"] = False if len(row.findChild().contents) == 2 else True
-                        data[currentNumber]["link"] = f"https://leetcode.com{row.findChild().findChild()['href']}"
-                    elif parser == 4:
-                        data[currentNumber]["acceptance"] = row.text[:len(row.text)-1]
-                    elif parser == 5:
-                        data[currentNumber]["difficulty"] = row.text
-                        break
+                        if currentNumber in data.keys():
+                            data[currentNumber][corr_tags[tag]] = True
                     parser += 1 
+    driver.close()
+    connection, cursor = createConnection()
 
-        if not data:
-            await message.channel.send("Up to date")
-            driver.close()
-            return
-
-        tag_links, corr_tags = getTags()
-
-        for tag, link in tag_links.items():
-            driver.close()
-            driver = setupBroswer()
-            driver.get(link)
-            try:
-                Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
-            except:
-                pass
-            try:
-                driver.find_element_by_xpath('//select[@class = "form-control"]').click()
-                select = Select(driver.find_element_by_xpath('//select[@class = "form-control"]'))
-                select.select_by_visible_text('all')
-            except:
-                pass
-
-            start = True
-            soup = BeautifulSoup(driver.page_source, features="html.parser")
-
-            for trTags in soup.find_all("tr"):
-                if(start):
-                    start = False
-                    continue
-                else:
-                    parser = 0
-                    for row in trTags.find_all('td'):
-                        if parser == 1:
-                            currentNumber = row.text.strip()
-                            currentNumber = int(currentNumber)
-                            if currentNumber in data.keys():
-                                data[currentNumber][corr_tags[tag]] = True
-                        parser += 1 
-        driver.close()
-        connection, cursor = createConnection()
-
-        try:
-            cursor.execute(''' Create Table if not exists problems
-            (
-                number int,
-                name char(156),
-                subscription bool,
-                link char(156),
-                acceptance float,
-                difficulty char(32),
-                Arrays boolean,
-                Hash_Table boolean,
-                Linked_Lists boolean,
-                Math boolean,
-                Two_Pointers boolean,
-                String boolean,
-                Binary_Search boolean,
-                Divide_and_Conquer boolean,
-                Dynamic_Programming boolean,
-                Backtracking boolean,
-                Stack boolean,
-                Heap boolean,
-                Greedy boolean,
-                Sort boolean,
-                Bit_Manipulation boolean,
-                Tree boolean,
-                Depth_First_Search boolean,
-                Breadth_First_Search boolean,
-                Union_Find boolean,
-                Graph boolean,
-                Design boolean,
-                Topological_Sort boolean,
-                Trie boolean,
-                Binary_Indexed_Tree boolean,
-                Segment_Tree boolean,
-                Binary_Search_Tree boolean,
-                Recursion boolean,
-                Brain_Teaser boolean,
-                Memoization boolean,
-                Queue boolean,
-                Minimax boolean,
-                Reservoir_Sampling boolean,
-                Ordered_Map boolean,
-                Geometry boolean,
-                Random boolean,
-                Rejection_Sampling boolean,
-                Sliding_Window boolean,
-                Line_Sweep boolean,
-                Rolling_Hash boolean,
-                Suffix_Array boolean
-            )
-            ''')
-        except:
-            print("Table exists")
+    try:
+        cursor.execute(''' Create Table if not exists problems
+        (
+            number int,
+            name char(156),
+            subscription bool,
+            link char(156),
+            acceptance float,
+            difficulty char(32),
+            Arrays boolean,
+            Hash_Table boolean,
+            Linked_Lists boolean,
+            Math boolean,
+            Two_Pointers boolean,
+            String boolean,
+            Binary_Search boolean,
+            Divide_and_Conquer boolean,
+            Dynamic_Programming boolean,
+            Backtracking boolean,
+            Stack boolean,
+            Heap boolean,
+            Greedy boolean,
+            Sort boolean,
+            Bit_Manipulation boolean,
+            Tree boolean,
+            Depth_First_Search boolean,
+            Breadth_First_Search boolean,
+            Union_Find boolean,
+            Graph boolean,
+            Design boolean,
+            Topological_Sort boolean,
+            Trie boolean,
+            Binary_Indexed_Tree boolean,
+            Segment_Tree boolean,
+            Binary_Search_Tree boolean,
+            Recursion boolean,
+            Brain_Teaser boolean,
+            Memoization boolean,
+            Queue boolean,
+            Minimax boolean,
+            Reservoir_Sampling boolean,
+            Ordered_Map boolean,
+            Geometry boolean,
+            Random boolean,
+            Rejection_Sampling boolean,
+            Sliding_Window boolean,
+            Line_Sweep boolean,
+            Rolling_Hash boolean,
+            Suffix_Array boolean
+        )
+        ''')
+    except:
+        print("Table exists")
 
 
-        for x, y in data.items():
-            cursor.execute("Insert into problems (number, name, subscription, link, acceptance, difficulty, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find) Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (x, y['name'], y['subscription'], y['link'], y['acceptance'], y['difficulty'], y['arrays'], y['backtracking'], y['binary_indexed_tree'], y['binary_search'], y['binary_search_tree'], y['bit_manipulation'], y['brain_teaser'], y['breadth_first_search'], y['depth_first_search'], y['design'], y['divide_and_conquer'], y['dynamic_programming'], y['geometry'], y['graph'], y['greedy'], y['hash_table'], y['heap'], y['line_sweep'], y['linked_lists'], y['math'], y['memoization'], y['minimax'], y['ordered_map'], y['queue'], y['random'], y['recursion'], y['rejection_sampling'], y['reservoir_sampling'], y['rolling_hash'], y['segment_tree'], y['sliding_window'], y['sort'], y['stack'], y['string'], y['suffix_array'], y['topological_sort'], y['tree'], y['trie'], y['two_pointers'], y['union_find']))
+    for x, y in data.items():
+        cursor.execute("Insert into problems (number, name, subscription, link, acceptance, difficulty, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find) Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (x, y['name'], y['subscription'], y['link'], y['acceptance'], y['difficulty'], y['arrays'], y['backtracking'], y['binary_indexed_tree'], y['binary_search'], y['binary_search_tree'], y['bit_manipulation'], y['brain_teaser'], y['breadth_first_search'], y['depth_first_search'], y['design'], y['divide_and_conquer'], y['dynamic_programming'], y['geometry'], y['graph'], y['greedy'], y['hash_table'], y['heap'], y['line_sweep'], y['linked_lists'], y['math'], y['memoization'], y['minimax'], y['ordered_map'], y['queue'], y['random'], y['recursion'], y['rejection_sampling'], y['reservoir_sampling'], y['rolling_hash'], y['segment_tree'], y['sliding_window'], y['sort'], y['stack'], y['string'], y['suffix_array'], y['topological_sort'], y['tree'], y['trie'], y['two_pointers'], y['union_find']))
 
-        connection.commit()
-        connection.close()
-        await message.channel.send("Up to date")
-
+    connection.commit()
+    connection.close()
 
     
 
@@ -408,7 +398,6 @@ async def description(message, commands):
 
 
 async def euler(message, commands):
-    numberOfEulerProblems()
     global eulerCount
     await message.channel.send(f"https://projecteuler.net/problem={randint(1,eulerCount)}")
 
@@ -493,19 +482,20 @@ COMMANDS = {
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     daily.start()
+    update.start()
 
-@tasks.loop(minutes=15)
+@tasks.loop(minutes=30)
 async def daily():
     currentTime = datetime.now()
-    if currentTime.hour <= 20:
+    if currentTime.hour == 9 and currentTime.minute <= 30:
         channel = client.get_channel(778009190035226634)
 
         connection, cursor = createConnection()
 
-        cursor.execute("Select Count(*) from problems")
+        cursor.execute("Select Count(*) from problems where subscription = False")
         count = cursor.fetchall()[0][0]
 
-        cursor.execute("Select * from problems")
+        cursor.execute("Select * from problems where subscription = False")
         link = cursor.fetchall()[randint(1, count)][3]
 
         connection.close()
@@ -513,6 +503,20 @@ async def daily():
 
 @daily.before_loop
 async def beforeStartLoop():
+    await client.wait_until_ready()
+
+@tasks.loop(hours=24)
+async def update():
+    currentMonth = datetime.now().month
+    global lastUpdated
+    if currentMonth != lastUpdated:
+        lastUpdated = currentMonth
+        await updateLeetcodeData()
+        await numberOfEulerProblems()
+
+
+@update.before_loop
+async def beforeUpdateLoop():
     await client.wait_until_ready()
 
 
@@ -533,7 +537,6 @@ async def on_message(message):
                 await message.channel.send(f"```{value}```")
             else:
                 await COMMANDS[command[1]]['function'](message, command[1:])
-                await updateLeetcodeData(message)
 
 
 client.run(os.environ["TOKEN"])
