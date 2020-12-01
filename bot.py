@@ -519,7 +519,7 @@ async def update():
     global lastUpdated
     if currentMonth != lastUpdated:
         lastUpdated = currentMonth
-        await updateLeetcodeData()
+        updateLeetcodeData()
         await numberOfEulerProblems()
 
 
