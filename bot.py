@@ -291,7 +291,7 @@ async def randomProblem(message, commands):
         if commands[4] == "i":
             await information(message, [None, link])
         elif commands[4] == "d":
-            await description(message, [None, link]])
+            await description(message, [None, link])
         elif commands[4] == 'id' or commands[4] == "di":
             await information(message, [None, link])
             await information(message, [None, link])
