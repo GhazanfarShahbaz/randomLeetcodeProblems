@@ -44,7 +44,7 @@ def setupBroswer():
     return driver
 
 
-def numberOfEulerProblems():
+async def numberOfEulerProblems():
     """Checks to the number of euler problems"""
     link = "https://projecteuler.net/recent"
     response = requests.get(link)
@@ -519,7 +519,7 @@ async def update():
     global lastUpdated
     if currentMonth != lastUpdated:
         lastUpdated = currentMonth
-        updateLeetcodeData()
+        await updateLeetcodeData()
         await numberOfEulerProblems()
 
 
