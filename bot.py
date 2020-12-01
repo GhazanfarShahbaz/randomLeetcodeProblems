@@ -290,7 +290,7 @@ async def randomProblem(message, commands):
     if(len(commands) == 5):
         if commands[4] == "d":
             print(url(link))
-            await description(message, [None, link])
+            await description(message, [None, link], True)
     # if(len(commands) == 5):
     #     if commands[4] == "i":
     #         await information(message, [None, link])
@@ -302,7 +302,7 @@ async def randomProblem(message, commands):
 
 
 
-async def information(message, commands):
+async def information(message, commands, skipCheck=False):
     """Returns information for a proble given a link or problem number"""
     print("Information function was called with the following parameters: ", commands)
     connection, cursor = createConnection()
@@ -347,15 +347,16 @@ async def information(message, commands):
     await message.channel.send(formString)    
 
 
-async def description(message, commands):
+async def description(message, commands, skipCheck=False):
     """Returns the description for a questios given a link, need to work on optional param language
         Prbably should add a check to make sure its a leetcode url"""
-    if not url(commands[1]):
-        await message.channel.send("Sorry this is not a valid url")
-        return
-    if len(commands) == 3 and not checkLanguage(commands[2]):
-        await message.channel.send("Sorry this is not a valid language")
-        return
+    if not skipCheck:
+        if not url(commands[1]):
+            await message.channel.send("Sorry this is not a valid url")
+            return
+        if len(commands) == 3 and not checkLanguage(commands[2]):
+            await message.channel.send("Sorry this is not a valid language")
+            return
     
     connection, cursor = createConnection()
 
