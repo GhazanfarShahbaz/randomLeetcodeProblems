@@ -30,7 +30,7 @@
 * Create bot functions - _In Progress_
 
 ## Future Functionalities and Functions
-* ~~Function to post a question each day~~ 
+* ~~Function to post a question each day~~ _Finished_
 * Save questions that each person in the server has completed
 * Submit answers through message
 
