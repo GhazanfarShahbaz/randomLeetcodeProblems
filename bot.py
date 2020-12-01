@@ -498,7 +498,7 @@ async def on_ready():
 async def daily():
     currentTime = datetime.now()
     if currentTime.hour <= 20:
-        channel = await client.get_channel(778009190035226634)
+        channel = client.get_channel(778009190035226634)
 
         connection, cursor = createConnection()
 
