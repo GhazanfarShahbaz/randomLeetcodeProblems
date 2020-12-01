@@ -63,6 +63,8 @@ def numberOfEulerProblems():
 async def updateLeetcodeData():
     """Updates the leetcode problems"""
 
+    print("Starting Update")
+
     connection, cursor = createConnection()
     cursor.execute("Select Count(*) from problems")
     totalCount = cursor.fetchone()[0]
@@ -80,6 +82,7 @@ async def updateLeetcodeData():
     start = True
     soup = BeautifulSoup(driver.page_source, features="html.parser")
     
+    print("Parsing data")
     for trTags in soup.find_all("tr"):
         if(start):
             start = False
@@ -118,6 +121,7 @@ async def updateLeetcodeData():
 
     tag_links, corr_tags = getTags()
 
+    print("Parsing tags")
     for tag, link in tag_links.items():
         driver.close()
         driver = setupBroswer()
@@ -206,12 +210,13 @@ async def updateLeetcodeData():
     except:
         print("Table exists")
 
-
+    print("Appending data")
     for x, y in data.items():
         cursor.execute("Insert into problems (number, name, subscription, link, acceptance, difficulty, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find) Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (x, y['name'], y['subscription'], y['link'], y['acceptance'], y['difficulty'], y['arrays'], y['backtracking'], y['binary_indexed_tree'], y['binary_search'], y['binary_search_tree'], y['bit_manipulation'], y['brain_teaser'], y['breadth_first_search'], y['depth_first_search'], y['design'], y['divide_and_conquer'], y['dynamic_programming'], y['geometry'], y['graph'], y['greedy'], y['hash_table'], y['heap'], y['line_sweep'], y['linked_lists'], y['math'], y['memoization'], y['minimax'], y['ordered_map'], y['queue'], y['random'], y['recursion'], y['rejection_sampling'], y['reservoir_sampling'], y['rolling_hash'], y['segment_tree'], y['sliding_window'], y['sort'], y['stack'], y['string'], y['suffix_array'], y['topological_sort'], y['tree'], y['trie'], y['two_pointers'], y['union_find']))
 
     connection.commit()
     connection.close()
+    print("Finished updating")
 
     
 
