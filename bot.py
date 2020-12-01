@@ -123,6 +123,7 @@ async def updateLeetcodeData():
 
     print("Parsing tags")
     for tag, link in tag_links.items():
+        print("Curremt tag", tag)
         driver.close()
         driver = setupBroswer()
         driver.get(link)
@@ -506,9 +507,11 @@ async def daily():
         connection.close()
         await channel.send(link)
 
+
 @daily.before_loop
 async def beforeStartLoop():
     await client.wait_until_ready()
+
 
 @tasks.loop(hours=24)
 async def update():
