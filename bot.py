@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from random import randint
 from datetime import datetime
+from pytz import timezone
 from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
@@ -497,8 +498,8 @@ async def on_ready():
 
 @tasks.loop(minutes=30)
 async def daily():
-    currentTime = datetime.now()
-    if currentTime.hour == 9 and currentTime.minute <= 30:
+    currentTime = datetime.now(timezone('US/Eastern'))
+    if currentTime.hour == 8 and currentTime.minute <= 30:
         channel = client.get_channel(778009190035226634)
 
         connection, cursor = createConnection()
