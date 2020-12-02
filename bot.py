@@ -118,6 +118,7 @@ async def updateLeetcodeData():
 
     if not data:
         driver.close()
+        print("Nothing to add")
         return
 
     tag_links, corr_tags = getTags()
