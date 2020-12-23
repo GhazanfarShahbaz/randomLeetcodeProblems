@@ -275,9 +275,16 @@ async def createSpreadsheets():
     global eulerCount
 
     # creates worksheets
-    sheet.add_worksheet(title="Leetcode_Data", rows=str(leetcode_count), cols=str(number_of_users))
-    sheet.add_worksheet(title="Codechef_Data", rows=str(codechef_count), cols=str(number_of_users))
-    sheet.add_worksheet(title="Euler_Data", rows=str(eulerCount), cols=str(number_of_users))
+    leetcode_sheet = sheet.add_worksheet(title="Leetcode_Data", rows=str(leetcode_count), cols=str(number_of_users))
+    codechef_sheet = sheet.add_worksheet(title="Codechef_Data", rows=str(codechef_count), cols=str(number_of_users))
+    euler_sheet = sheet.add_worksheet(title="Euler_Data", rows=str(eulerCount), cols=str(number_of_users))
+
+    for column, user in enumerate(client.users):
+        leetcode_sheet.update_cell(column, 1, user)
+        codechef_sheet.update_cell(column, 1, user)
+        euler_sheet.update_cell(column, 1, user)
+
+
 
 
 async def helpUser(message, commands):
@@ -415,7 +422,7 @@ async def description(message, commands, skipCheck=False):
         if len(commands) == 3 and not checkLanguage(commands[2]):
             await message.channel.send("Sorry this is not a valid language")
             return
-    
+
     connection, cursor = createConnection()
 
     cursor.execute("Select subscription from problems where link = %s", (commands[1],))
@@ -427,7 +434,7 @@ async def description(message, commands, skipCheck=False):
         return
 
     print("Template function was called with the following parameters:", commands)
-    
+
     driver = setupBroswer()
     print(commands[1])
     driver.get(commands[1])
@@ -473,7 +480,7 @@ async def euler(message, commands):
 async def codechef(message, commands):
     """Returns a link to a question from codechef, will be adding other comands"""
     if len(commands) == 2 and not allowedCodeChefDifficulty(commands[1]):
-        await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenger```") 
+        await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenger```")
         return
 
     connection, cursor = createConnection()
@@ -499,7 +506,7 @@ def validProblemNumber(problemNumber: int, problemType: str) -> bool:
     total = cursor.fetchone()[0]
 
     connection.close()
-    return True, total if problemNumber <= total and problemNumber > 0 else False, total
+    return True, total if problemNumber <= total and problemNumber >= 0 else False, total
 
 
 async def completed(message, commands):
@@ -522,7 +529,7 @@ async def completed(message, commands):
 
 
 async def share(message, commands):
-    if not validate_email(commands[1]) or not commands[1][len(commands[1])-5:] == "gmail":
+    if not (validate_email(commands[1]) and commands[1][len(commands[1])-5:] == "gmail"):
         await message.channel.send("This is not a valid gmail")
         return
 
