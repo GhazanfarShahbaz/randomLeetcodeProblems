@@ -405,7 +405,7 @@ async def information(message, commands, skipCheck=False):
 
     if not foundFirstType:
         formString += "Problem Tags: None"
-    
+
     formString += "\n```"
     connection.close()
 
@@ -535,15 +535,14 @@ async def completed(message, commands):
     user_index = -1 
     for index, user in enumerate(user_list):
         if user == message.author:
-            user_index = index
-            break 
+            user_index = index + 1
+            break
     
     if user_index == -1:
-        # Have to figure out how to add new columns
-        await message.channel.send("Sorry this user is not in the spread sheet yet :(")
-        return 
+        sheet.add_cols(1)
+        user_index = len(user_list)+1
 
-    sheet.update(problem_number+1, user_index, "Y")
+    sheet.update(problem_number+1, user_index, "C")
 
     await message.channel.send("Sheet has been updated")
 
@@ -558,6 +557,37 @@ async def share(message, commands):
     sheet.share(commands[1], perm_type='user', role='viewer')
 
     await message.channel.send(f"The sheet has been shared with {commands[1]}")
+
+
+async def listCompleted(message, commands):
+    worksheet_name = worksheetName(message[1].lower())
+
+    if worksheet_name == "":
+        await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+
+    user_list = sheet.col_values(1)
+    user_index = -1 
+    for index, user in enumerate(user_list):
+        if user == message.author:
+            user_index = index + 1
+            break
+
+    if user_index == -1:
+        sheet.add_cols(1)
+        user_index = len(user_list)+1
+
+    total = 0
+    formString = "Completed: "
+    for row in range(2, sheet.wks.row_count + 1):
+        currentRow = sheet.row_values(row)
+        if currentRow[user_index] == "C":
+            # completed.append(row-1)
+            total += 1
+            formString += f"{row-1} "
+
+    formString = f"```Total Completed: {total}\n" + formString + "```"
+
+    await message.channel.send(formString)
 
 
 COMMANDS = {
