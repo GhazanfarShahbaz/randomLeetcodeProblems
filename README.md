@@ -25,12 +25,12 @@
 * Sends a daily leetcode question
 
 ## Checklist
-* ~~Webscrape data and place it into a csv~~ _Finished_
-* ~~Place data into a database~~ _Finished_
-* Create bot functions - _In Progress_
+- [x] Webscrape data and place it into a csv
+- [x] Place data into a database
+- [ ] Create bot functions - _In Progress_
 
 ## Future Functionalities and Functions
-* ~~Function to post a question each day~~ _Finished_
-* Save questions that each person in the server has completed
-* Submit answers through message
+- [x] Function to post a question each day 
+- [ ]Save questions that each person in the server has completed
+- [ ]Submit answers through message
 
