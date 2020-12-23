@@ -15,6 +15,7 @@ from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubs
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
 from validators import url
+from validate_email import validate_email
 import tempfile
 import gspread
 import json
@@ -520,6 +521,18 @@ async def completed(message, commands):
     return
 
 
+async def share(message, commands):
+    if not validate_email(commands[1]) or not commands[1][len(commands[1])-5:] == "gmail":
+        await message.channel.send("This is not a valid gmail")
+        return
+
+    gc = setupSpreadsheets()
+    sheet = gc.open('Leetcode_Bot_Data')
+    sheet.share(commands[1], perm_type='user', role='viewer')
+
+    await message.channel.send(f"The sheet has been shared with {commands[1]}")
+
+
 COMMANDS = {
     "help": {
         "help_message": "Lists all available commnd",
@@ -583,6 +596,15 @@ COMMANDS = {
         "required_params": 2,
         "optional_params": 0,
         "total_params": 2
+    },
+    "share": {
+        "help_message": "Shares the spreadsheet with users",
+        "help_note": "Gmail is the email of the person who the google sheet will be shared with",
+        "usage": "!questions share <email>",
+        "function": share,
+        "required_params": 1,
+        "optional_params": 0,
+        "total_params": 1
     }
 }
 
