@@ -525,7 +525,26 @@ async def completed(message, commands):
         return
 
     # Need to do complete logic here
-    return
+    sheet = getWorksheet(worksheet_name)
+    row_count = sheet.wks.row_count - 1 # Subtract 1 because header is not counteds
+    if total > row_count:
+        sheet.resize(total - row_count)
+
+    user_list = sheet.col_values(1)
+    user_index = -1 
+    for index, user in enumerate(user_list):
+        if user == message.author:
+            user_index = index
+            break 
+    
+    if user_index == -1:
+        # Have to figure out how to add new columns
+        await message.channel.send("Sorry this user is not in the spread sheet yet :(")
+        return 
+
+    sheet.update(problem_number+1, user_index, "Y")
+
+    await message.channel.send("Sheet has been updated")
 
 
 async def share(message, commands):
