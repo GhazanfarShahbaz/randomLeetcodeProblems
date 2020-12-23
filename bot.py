@@ -654,6 +654,15 @@ COMMANDS = {
         "optional_params": 0,
         "total_params": 2
     },
+    "listCompleted": {
+        "help_message": "Lists the number of questions completed by a user",
+        "help_note": "From is either leetcode, euler or codechef",
+        "usage": "!questions listCompleted <from>",
+        "function": listCompleted,
+        "required_params": 1,
+        "optional_params": 0,
+        "total_params": 1
+    },
     "share": {
         "help_message": "Shares the spreadsheet with users",
         "help_note": "Gmail is the email of the person who the google sheet will be shared with",
