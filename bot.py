@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from random import randint
 from datetime import datetime
 from pytz import timezone
-from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty
+from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty, worksheetName
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
 from validators import url
@@ -264,10 +264,10 @@ async def createSpreadsheets():
     number_of_users = len(client.users)
 
     cursor.execute("Select Count(*) from problems")
-    leetcode_count = cursor.fetchone()
+    leetcode_count = cursor.fetchone()[0]
 
     cursor.execute("Select Count(*) from codechef")
-    codechef_count = cursor.fetchone()
+    codechef_count = cursor.fetchone()[0]
 
     connection.close()
     await numberOfEulerProblems()
@@ -374,7 +374,7 @@ async def information(message, commands, skipCheck=False):
         connection.close()
         return
 
-    data = cursor.fetchone()
+    data = cursor.fetchone()[0]
 
     if not data:
         message.channel.send("Sorry this link/number does not exist")
@@ -481,10 +481,43 @@ async def codechef(message, commands):
     cursor.execute("Select Count(*) from codechef" + script)
     count = cursor.fetchall()[0][0]
     cursor.execute("Select * from codechef" + script)
-    link = cursor.fetchall()[randint(1,count)][2]
+    link = cursor.fetchall()[randint(1, count)][2]
 
     connection.close()
     await message.channel.send(link)
+
+
+def validProblemNumber(problemNumber: int, problemType: str) -> bool:
+    if type == "euler":
+        global eulerCount
+        return True, eulerCount if problemNumber <= eulerCount else False, eulerCount
+
+    connection, cursor = createConnection()
+
+    cursor.execute(f"Select Coun(*) from {problemType}")
+    total = cursor.fetchone()[0]
+
+    connection.close()
+    return True, total if problemNumber <= total and problemNumber > 0 else False, total
+
+
+async def completed(message, commands):
+    problem_type = message[1].lower()
+    problem_number = message[2]
+    worksheet_name = worksheetName(problem_type)
+
+    if worksheet_name == "":
+        await message.channe.send("This is not a valid type, please pick from leetcode, euler or codechef")
+        return
+
+    isValid, total = validProblemNumber(problem_number, problem_type)
+
+    if(not isValid):
+        await message.channel.send(f"The given problem number is either too big or too small, the total number of questions for {problem_type} is {total}")
+        return
+
+    # Need to do complete logic here
+    return
 
 
 COMMANDS = {
@@ -541,6 +574,15 @@ COMMANDS = {
         "required_params": 0,
         "optional_params": 1,
         "total_params": 1
+    },
+    "completed": {
+        "help_message": "Marks a question as complete in the spreadsheet",
+        "help_note": "From is either leetcode, euler or codechef, number is the problem number that has been completed",
+        "usage": "!questions completed <from> <number>",
+        "function": completed,
+        "required_params": 2,
+        "optional_params": 0,
+        "total_params": 2
     }
 }
 
@@ -550,6 +592,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     daily.start()
     update.start()
+
 
 @tasks.loop(minutes=30)
 async def daily():
