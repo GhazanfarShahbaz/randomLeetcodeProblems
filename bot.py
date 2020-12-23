@@ -69,6 +69,14 @@ def setupSpreadsheets():
     return gc
 
 
+def getWorksheet(worksheetName: str):
+    """Returns a specific worksheet"""
+    gc = setupSpreadsheets()
+    sheet = gc.open("Leetcode_Bot_Data")
+
+    return sheet.sh.worksheet(worksheetName)
+
+
 async def numberOfEulerProblems():
     """Checks to the number of euler problems"""
     link = "https://projecteuler.net/recent"
@@ -246,7 +254,7 @@ async def updateLeetcodeData():
     print("Finished updating")
 
 
-async def createSpreadSheets():
+async def createSpreadsheets():
     """This only runs if this is the first time creating the sheets"""
     gc = setupSpreadsheets()
 
@@ -416,7 +424,6 @@ async def description(message, commands, skipCheck=False):
     if(data):
         await message.channel.send("```Sorry this question requires a subscription```")
         return
-
 
     print("Template function was called with the following parameters:", commands)
     
