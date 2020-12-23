@@ -15,13 +15,12 @@ from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubs
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
 from validators import url
+import tempfile
+import gspread
+import json
 import requests
 import psycopg2
 import os
-
-
-# googlesheets -> gspread -> pandas
-
 
 client = discord.Client()
 eulerCount = 735
@@ -44,6 +43,29 @@ def setupBroswer():
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return driver
 
+
+def setupSpreadsheets():
+    """Sets up spreadsheets, this is only run if this is the first time logging in"""
+    authorization_file = tempfile.NamedTemporaryFile()
+    authorization_file.write(
+        json.dumps(
+            {
+                "type": os.environ.get("GOOGLE_AUTHORIZATION_TYPE"),
+                "project_id": os.environ.get("GOOGLE_PROJECT_ID"),
+                "private_key_id": os.environ.get("GOOGLE_PRIVATE_KEY_ID"),
+                "private_key": os.environ.get("GOOGLE_PRIVATE_KEY"),
+                "client_email": os.environ.get("GOOGLE_CLIENT_EMAIL"),
+                "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
+                "auth_uri": os.environ.get("GOOGLE_AUTH_URI"),
+                "token_uri": os.environ.get("GOOGLE_TOKEN_URI"),
+                "auth_provider_x509_cert_url": os.environ.get("GOOGLE_AUTH_PROVIDER_X509_CERT_URL"),
+                "client_x509_cert_url": os.environ.get("GOOGLE_CLIENT_X509_CERT_URL")
+            }
+        ).encode('utf-8')
+    )
+    authorization_file.flush()
+    gc = gspread.service_account(filename=authorization_file.name)
+    return gc
 
 async def numberOfEulerProblems():
     """Checks to the number of euler problems"""
