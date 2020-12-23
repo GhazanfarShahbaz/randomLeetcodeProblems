@@ -31,6 +31,6 @@
 
 ## Future Functionalities and Functions
 - [x] Function to post a question each day 
-- [ ] Save questions that each person in the server has completed
+- [x] Save questions that each person in the server has completed
 - [ ] Submit answers through message
 

@@ -118,7 +118,7 @@ async def updateLeetcodeData():
     
     print("Parsing data")
     for trTags in soup.find_all("tr"):
-        if(start):
+        if start:
             start = False
             continue
         else:
@@ -128,7 +128,7 @@ async def updateLeetcodeData():
                 if parser == 1:
                     currentNumber = row.text.strip()
                     currentNumber = int(currentNumber)
-                    if(currentNumber < totalCount):
+                    if currentNumber < totalCount:
                         break 
                     data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
                 elif parser == 2:
@@ -158,7 +158,7 @@ async def updateLeetcodeData():
 
     print("Parsing tags")
     for tag, link in tag_links.items():
-        print("Curremt tag", tag)
+        print("Current tag", tag)
         driver.close()
         driver = setupBroswer()
         driver.get(link)
@@ -177,7 +177,7 @@ async def updateLeetcodeData():
         soup = BeautifulSoup(driver.page_source, features="html.parser")
 
         for trTags in soup.find_all("tr"):
-            if(start):
+            if start:
                 start = False
                 continue
             else:
@@ -342,7 +342,7 @@ async def randomProblem(message, commands):
 
     cursor.execute("Select Count(*) from problems " + script)
     count = cursor.fetchall()[0][0]
-    if(count == 0):
+    if count == 0:
         await message.channel.send("```Sorry no problems matched the criteria```")
         return
 
@@ -352,7 +352,7 @@ async def randomProblem(message, commands):
 
     await message.channel.send(link)
 
-    if(len(commands) == 5):
+    if len(commands) == 5:
         if commands[4] == "d":
             print(url(link))
             await description(message, [None, link], True)
@@ -429,7 +429,7 @@ async def description(message, commands, skipCheck=False):
     data = cursor.fetchone()[0]
     connection.close()
 
-    if(data):
+    if data:
         await message.channel.send("```Sorry this question requires a subscription```")
         return
 
@@ -510,6 +510,7 @@ def validProblemNumber(problemNumber: int, problemType: str) -> bool:
 
 
 async def completed(message, commands):
+    """ Marks a problem completed for the user who called the command"""
     problem_type = message[1].lower()
     problem_number = message[2]
     worksheet_name = worksheetName(problem_type)
@@ -520,13 +521,13 @@ async def completed(message, commands):
 
     isValid, total = validProblemNumber(problem_number, problem_type)
 
-    if(not isValid):
+    if not isValid:
         await message.channel.send(f"The given problem number is either too big or too small, the total number of questions for {problem_type} is {total}")
         return
 
     # Need to do complete logic here
     sheet = getWorksheet(worksheet_name)
-    row_count = sheet.wks.row_count - 1 # Subtract 1 because header is not counteds
+    row_count = sheet.wks.row_count - 1 # Subtract 1 because header is not counted
     if total > row_count:
         sheet.resize(total - row_count)
 
