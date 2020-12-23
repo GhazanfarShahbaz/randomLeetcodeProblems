@@ -26,6 +26,7 @@ client = discord.Client()
 eulerCount = 735
 lastUpdated = -1
 
+
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
     DATABASE_URL = os.environ['DATABASE_URL']
@@ -45,7 +46,7 @@ def setupBroswer():
 
 
 def setupSpreadsheets():
-    """Sets up spreadsheets, this is only run if this is the first time logging in"""
+    """Sets up spreadsheets, returns the *not sure what this is yet tbh* """
     authorization_file = tempfile.NamedTemporaryFile()
     authorization_file.write(
         json.dumps(
@@ -66,6 +67,7 @@ def setupSpreadsheets():
     authorization_file.flush()
     gc = gspread.service_account(filename=authorization_file.name)
     return gc
+
 
 async def numberOfEulerProblems():
     """Checks to the number of euler problems"""
@@ -243,7 +245,30 @@ async def updateLeetcodeData():
     connection.close()
     print("Finished updating")
 
-    
+
+async def createSpreadSheets():
+    """This only runs if this is the first time creating the sheets"""
+    gc = setupSpreadsheets()
+
+    connection, cursor = createConnection()
+
+    sheet = gc.create('Leetcode_Bot_Data')
+    number_of_users = len(client.users)
+
+    cursor.execute("Select Count(*) from problems")
+    leetcode_count = cursor.fetchone()
+
+    cursor.execute("Select Count(*) from codechef")
+    codechef_count = cursor.fetchone()
+
+    connection.close()
+    await numberOfEulerProblems()
+    global eulerCount
+
+    # creates worksheets
+    sheet.add_worksheet(title="Leetcode_Data", rows=str(leetcode_count), cols=str(number_of_users))
+    sheet.add_worksheet(title="Codechef_Data", rows=str(codechef_count), cols=str(number_of_users))
+    sheet.add_worksheet(title="Euler_Data", rows=str(eulerCount), cols=str(number_of_users))
 
 
 async def helpUser(message, commands):
