@@ -280,9 +280,9 @@ async def createSpreadsheets():
     euler_sheet = sheet.add_worksheet(title="Euler_Data", rows=str(eulerCount), cols=str(number_of_users))
 
     for column, user in enumerate(client.users):
-        leetcode_sheet.update_cell(column, 1, user)
-        codechef_sheet.update_cell(column, 1, user)
-        euler_sheet.update_cell(column, 1, user)
+        leetcode_sheet.update_cell(1, column+1, user)
+        codechef_sheet.update_cell(1, column+1, user)
+        euler_sheet.update_cell(1, column+1, user)
 
 
 
@@ -537,10 +537,11 @@ async def completed(message, commands):
         if user == message.author:
             user_index = index + 1
             break
-    
+
     if user_index == -1:
         sheet.add_cols(1)
         user_index = len(user_list)+1
+        sheet.update_cell(1, user_index, message.author)
 
     sheet.update(problem_number+1, user_index, "C")
 
@@ -575,6 +576,7 @@ async def listCompleted(message, commands):
     if user_index == -1:
         sheet.add_cols(1)
         user_index = len(user_list)+1
+        sheet.update_cell(1, user_index, message.author)
 
     total = 0
     formString = "Completed: "
