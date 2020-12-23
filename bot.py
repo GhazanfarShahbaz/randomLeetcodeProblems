@@ -285,8 +285,6 @@ async def createSpreadsheets():
         euler_sheet.update_cell(1, column+1, user)
 
 
-
-
 async def helpUser(message, commands):
     """Provides the user a list of commands or gives instructions on how to use a command"""
     print("Help user was called with the following commands: ", commands)
@@ -328,7 +326,7 @@ async def randomProblem(message, commands):
     tag = "Any" if len(commands) < 3 else commands[2]
     subscription = "Any" if len(commands) < 4 else subscriptionQuery(commands[3])
 
-    params =[]
+    params = []
     params.append(f"difficulty = \'{difficulty}\'") if difficulty.lower() != "any" else None
     params.append(tag) if tag.lower() != "any" else None
     params.append(subscription) if subscription.lower() != "any" else None
@@ -353,18 +351,14 @@ async def randomProblem(message, commands):
     await message.channel.send(link)
 
     if len(commands) == 5:
+        print(url(link))
         if commands[4] == "d":
-            print(url(link))
             await description(message, [None, link], True)
-    # if(len(commands) == 5):
-    #     if commands[4] == "i":
-    #         await information(message, [None, link])
-    #     elif commands[4] == "d":
-    #         await description(message, [None, link])
-    #     elif commands[4] == 'id' or commands[4] == "di":
-    #         await information(message, [None, link])
-    #         await information(message, [None, link])
-
+        elif commands[4] == "i":
+            await information(message, [None, link])
+        elif commands[4] == "id" or commands[4] == "di":
+            await description(message, [None, link], True)
+            await information(message, [None, link])
 
 
 async def information(message, commands, skipCheck=False):
@@ -587,7 +581,7 @@ async def listCompleted(message, commands):
             total += 1
             formString += f"{row-1} "
 
-    formString = f"```Total Completed: {total}\n" + formString + "```"
+    formString = f"```Total {commands[1].title()} Problems Completed: {total}\n" + formString + "```"
 
     await message.channel.send(formString)
 
