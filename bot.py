@@ -115,7 +115,7 @@ async def updateLeetcodeData():
 
     start = True
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    
+
     print("Parsing data")
     for trTags in soup.find_all("tr"):
         if start:
@@ -129,12 +129,12 @@ async def updateLeetcodeData():
                     currentNumber = row.text.strip()
                     currentNumber = int(currentNumber)
                     if currentNumber < totalCount:
-                        break 
+                        break
                     data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
                 elif parser == 2:
                     val = ""
                     for x in row.text.strip():
-                        if x.isalnum() or x==" ":       
+                        if x.isalnum() or x==" ":
                             val +=x
                         else:
                             val += "_"
@@ -147,7 +147,7 @@ async def updateLeetcodeData():
                 elif parser == 5:
                     data[currentNumber]["difficulty"] = row.text
                     break
-                parser += 1 
+                parser += 1
 
     if not data:
         driver.close()
@@ -300,7 +300,7 @@ async def helpUser(message, commands):
     else:
         for command in COMMANDS.values():
             formString += f"{command['usage']} \n"
-    
+
     formString = f"```{formString}```"
 
     await message.channel.send(formString)
@@ -560,28 +560,69 @@ async def listCompleted(message, commands):
     if worksheet_name == "":
         await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
 
+    sheet = getWorksheet(worksheet_name)
+
     user_list = sheet.col_values(1)
     user_index = -1 
+    blankIndex = -1
     for index, user in enumerate(user_list):
         if user == message.author:
             user_index = index + 1
             break
+        if user == "":
+            blankIndex = index
+            break
 
     if user_index == -1:
-        sheet.add_cols(1)
-        user_index = len(user_list)+1
-        sheet.update_cell(1, user_index, message.author)
+        if blankIndex:
+            sheet.update_cell(1, blankIndex, message.author)
+        else:
+            sheet.add_cols(1)
+            user_index = len(user_list)+1
+            sheet.update_cell(1, user_index, message.author)
 
     total = 0
     formString = "Completed: "
     for row in range(2, sheet.wks.row_count + 1):
         currentRow = sheet.row_values(row)
         if currentRow[user_index] == "C":
-            # completed.append(row-1)
             total += 1
             formString += f"{row-1} "
 
-    formString = f"```Total {commands[1].title()} Problems Completed: {total}\n" + formString + "```"
+    formString = f"```Total {commands[1].title()} Completed: {total}\n" + formString + "```"
+
+    await message.channel.send(formString)
+
+
+async def topMembers(message, commands):
+    limit = 10 if len(commands) == 4 else commands[3]
+    if limit > 25:
+        await message.channel.send("Sorry limit was too big, setting it to 10")
+        limit = 10
+
+    worksheet_name = worksheetName(message[1].lower())
+    if worksheet_name == "":
+        await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+    
+    sheet = getWorksheet(worksheet_name)
+
+    userCounts = {name: 0 for name in sheet.col_values(1)}
+    user_list = sheet.col_values(1)
+
+    for row in range(2, sheet.wks.row_count + 1):
+        currentRow = sheet.row_values(row)
+        for m in range(len(currentRow)):
+            if currentRow[m] == 1:
+                userCounts[user_list[m]] += 1
+
+    sortedCounts = sorted(userCounts.items(), key=lambda x: x[1], reverse=True)
+
+    formString = "```Top Members \n"
+    lastIndex = limit if len(sortedCounts) > limit else len(sortedCounts)
+    for x in range(lastIndex):
+        formString += f"{sortedCounts[x][0]}: {sortedCounts[x][1]} \n"
+
+    formString += "```"
 
     await message.channel.send(formString)
 
@@ -641,7 +682,7 @@ COMMANDS = {
         "optional_params": 1,
         "total_params": 1
     },
-    "completed": {
+    "mark_complete": {
         "help_message": "Marks a question as complete in the spreadsheet",
         "help_note": "From is either leetcode, euler or codechef, number is the problem number that has been completed",
         "usage": "!questions completed <from> <number>",
@@ -667,6 +708,15 @@ COMMANDS = {
         "required_params": 1,
         "optional_params": 0,
         "total_params": 1
+    },
+    "top": {
+        "help_message": "Lists members in order of who completed the most problems of a type",
+        "help_note": "From is either leetcode, euler or codechef, limit is 10 by default and is optional(max limit is 25)",
+        "usage": "!questions share <from> <limti>",
+        "function": topMembers,
+        "required_params": 1,
+        "optional_params": 1,
+        "total_params": 2
     }
 }
 
