@@ -505,9 +505,10 @@ def validProblemNumber(problemNumber: int, problemType: str) -> bool:
 
 async def completed(message, commands):
     """ Marks a problem completed for the user who called the command"""
-    problem_type = message[1].lower()
-    problem_number = message[2]
+    problem_type = commands[1].lower()
+    problem_number = commands[2]
     worksheet_name = worksheetName(problem_type)
+    markType = "C" if len(commands) < 4 or commands[3] >= 1 else "NC"
 
     if worksheet_name == "":
         await message.channe.send("This is not a valid type, please pick from leetcode, euler or codechef")
@@ -537,7 +538,7 @@ async def completed(message, commands):
         user_index = len(user_list)+1
         sheet.update_cell(1, user_index, message.author)
 
-    sheet.update(problem_number+1, user_index, "C")
+    sheet.update(problem_number+1, user_index, markType)
 
     await message.channel.send("Sheet has been updated")
 
@@ -555,7 +556,7 @@ async def share(message, commands):
 
 
 async def listCompleted(message, commands):
-    worksheet_name = worksheetName(message[1].lower())
+    worksheet_name = worksheetName(commands[1].lower())
 
     if worksheet_name == "":
         await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
@@ -603,7 +604,7 @@ async def topMembers(message, commands):
     worksheet_name = worksheetName(message[1].lower())
     if worksheet_name == "":
         await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
-    
+
     sheet = getWorksheet(worksheet_name)
 
     userCounts = {name: 0 for name in sheet.col_values(1)}
@@ -682,14 +683,14 @@ COMMANDS = {
         "optional_params": 1,
         "total_params": 1
     },
-    "mark_complete": {
-        "help_message": "Marks a question as complete in the spreadsheet",
-        "help_note": "From is either leetcode, euler or codechef, number is the problem number that has been completed",
-        "usage": "!questions completed <from> <number>",
+    "mark": {
+        "help_message": "Marks a question as complete/incomplete in the spreadsheet",
+        "help_note": "From is either leetcode, euler or codechef, number is the problem number that has been completed, mark is either 0 or 1",
+        "usage": "!questions completed <from> <number> <mark>",
         "function": completed,
         "required_params": 2,
-        "optional_params": 0,
-        "total_params": 2
+        "optional_params": 1,
+        "total_params": 3
     },
     "listCompleted": {
         "help_message": "Lists the number of questions completed by a user",
