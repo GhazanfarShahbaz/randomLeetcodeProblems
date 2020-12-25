@@ -1,2 +1,5 @@
 test.py
 .env
+credentials.json
+quickstart.py
+spreadsheets/

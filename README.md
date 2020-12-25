@@ -16,21 +16,21 @@
 
 ## Current Functions
 * !questions help : lists all commands
-* !questions random <difficulty> <tag> : picks a random question and returns its link, difficulty, tag and subscription are optional parameters
-* !questions information <identifier> : returns information for a problem by number or link
-* !questions description <link> : returns the description and code template for a problem by its link
+* !questions random difficulty tag : picks a random question and returns its link, difficulty, tag and subscription are optional parameters
+* !questions information identifier : returns information for a problem by number or link
+* !questions description link : returns the description and code template for a problem by its link
 * !questions euler : returns a link to an euler problem
 * !questions codechef : returns a link to a codechef problem
 * Self updates the database for euler and leetcode problems each month
 * Sends a daily leetcode question
 
 ## Checklist
-* ~~Webscrape data and place it into a csv~~ _Finished_
-* ~~Place data into a database~~ _Finished_
-* Create bot functions - _In Progress_
+- [x] Webscrape data and place it into a csv
+- [x] Place data into a database
+- [ ] Create bot functions 
 
 ## Future Functionalities and Functions
-* ~~Function to post a question each day~~ _Finished_
-* Save questions that each person in the server has completed
-* Submit answers through message
+- [x] Function to post a question each day 
+- [x] Save questions that each person in the server has completed
+- [ ] Submit answers through message
 

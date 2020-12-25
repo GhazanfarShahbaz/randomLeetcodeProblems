@@ -11,21 +11,22 @@ from bs4 import BeautifulSoup
 from random import randint
 from datetime import datetime
 from pytz import timezone
-from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty
+from utility.allowed_params import allowedDifficulties, allowedTags, allowedSubscription, subscriptionQuery, allowedCodeChefDifficulty, worksheetName
 from utility.messageDict import getLanguageCode, checkLanguage
 from utility.tags import getTags
 from validators import url
+from validate_email import validate_email
+import tempfile
+import gspread
+import json
 import requests
 import psycopg2
 import os
 
-
-# googlesheets -> gspread -> pandas
-
-
 client = discord.Client()
 eulerCount = 735
 lastUpdated = -1
+
 
 def createConnection():
     """Creates connection to the database, returns connection and cursor"""
@@ -43,6 +44,38 @@ def setupBroswer():
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return driver
+
+
+def setupSpreadsheets():
+    """Sets up spreadsheets, returns the *not sure what this is yet tbh* """
+    authorization_file = tempfile.NamedTemporaryFile()
+    authorization_file.write(
+        json.dumps(
+            {
+                "type": os.environ.get("GOOGLE_AUTHORIZATION_TYPE"),
+                "project_id": os.environ.get("GOOGLE_PROJECT_ID"),
+                "private_key_id": os.environ.get("GOOGLE_PRIVATE_KEY_ID"),
+                "private_key": os.environ.get("GOOGLE_PRIVATE_KEY"),
+                "client_email": os.environ.get("GOOGLE_CLIENT_EMAIL"),
+                "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
+                "auth_uri": os.environ.get("GOOGLE_AUTH_URI"),
+                "token_uri": os.environ.get("GOOGLE_TOKEN_URI"),
+                "auth_provider_x509_cert_url": os.environ.get("GOOGLE_AUTH_PROVIDER_X509_CERT_URL"),
+                "client_x509_cert_url": os.environ.get("GOOGLE_CLIENT_X509_CERT_URL")
+            }
+        ).encode('utf-8')
+    )
+    authorization_file.flush()
+    gc = gspread.service_account(filename=authorization_file.name)
+    return gc
+
+
+def getWorksheet(worksheetName: str):
+    """Returns a specific worksheet"""
+    gc = setupSpreadsheets()
+    sheet = gc.open("Leetcode_Bot_Data")
+
+    return sheet.sh.worksheet(worksheetName)
 
 
 async def numberOfEulerProblems():
@@ -82,10 +115,10 @@ async def updateLeetcodeData():
 
     start = True
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    
+
     print("Parsing data")
     for trTags in soup.find_all("tr"):
-        if(start):
+        if start:
             start = False
             continue
         else:
@@ -95,13 +128,13 @@ async def updateLeetcodeData():
                 if parser == 1:
                     currentNumber = row.text.strip()
                     currentNumber = int(currentNumber)
-                    if(currentNumber < totalCount):
-                        break 
+                    if currentNumber < totalCount:
+                        break
                     data[currentNumber] = {'arrays': False, 'backtracking': False, 'binary_indexed_tree': False, 'binary_search': False, 'binary_search_tree': False, 'bit_manipulation': False, 'brain_teaser': False, 'breadth_first_search': False, 'depth_first_search': False, 'design': False, 'divide_and_conquer': False, 'dynamic_programming': False, 'geometry': False, 'graph': False, 'greedy': False, 'hash_table': False, 'heap': False, 'line_sweep': False, 'linked_lists': False, 'math': False, 'memoization': False, 'minimax': False, 'ordered_map': False, 'queue': False, 'random': False, 'recursion': False, 'rejection_sampling': False, 'reservoir_sampling': False, 'rolling_hash': False, 'segment_tree': False, 'sliding_window': False, 'sort': False, 'stack': False, 'string': False, 'suffix_array': False, 'topological_sort': False, 'tree': False, 'trie': False, 'two_pointers': False, 'union_find': False}
                 elif parser == 2:
                     val = ""
                     for x in row.text.strip():
-                        if x.isalnum() or x==" ":       
+                        if x.isalnum() or x==" ":
                             val +=x
                         else:
                             val += "_"
@@ -114,7 +147,7 @@ async def updateLeetcodeData():
                 elif parser == 5:
                     data[currentNumber]["difficulty"] = row.text
                     break
-                parser += 1 
+                parser += 1
 
     if not data:
         driver.close()
@@ -125,7 +158,7 @@ async def updateLeetcodeData():
 
     print("Parsing tags")
     for tag, link in tag_links.items():
-        print("Curremt tag", tag)
+        print("Current tag", tag)
         driver.close()
         driver = setupBroswer()
         driver.get(link)
@@ -144,7 +177,7 @@ async def updateLeetcodeData():
         soup = BeautifulSoup(driver.page_source, features="html.parser")
 
         for trTags in soup.find_all("tr"):
-            if(start):
+            if start:
                 start = False
                 continue
             else:
@@ -221,7 +254,35 @@ async def updateLeetcodeData():
     connection.close()
     print("Finished updating")
 
-    
+
+async def createSpreadsheets():
+    """This only runs if this is the first time creating the sheets"""
+    gc = setupSpreadsheets()
+
+    connection, cursor = createConnection()
+
+    sheet = gc.create('Leetcode_Bot_Data')
+    number_of_users = len(client.users)
+
+    cursor.execute("Select Count(*) from problems")
+    leetcode_count = cursor.fetchone()[0]
+
+    cursor.execute("Select Count(*) from codechef")
+    codechef_count = cursor.fetchone()[0]
+
+    connection.close()
+    await numberOfEulerProblems()
+    global eulerCount
+
+    # creates worksheets
+    leetcode_sheet = sheet.add_worksheet(title="Leetcode_Data", rows=str(leetcode_count), cols=str(number_of_users))
+    codechef_sheet = sheet.add_worksheet(title="Codechef_Data", rows=str(codechef_count), cols=str(number_of_users))
+    euler_sheet = sheet.add_worksheet(title="Euler_Data", rows=str(eulerCount), cols=str(number_of_users))
+
+    for column, user in enumerate(client.users):
+        leetcode_sheet.update_cell(1, column+1, user)
+        codechef_sheet.update_cell(1, column+1, user)
+        euler_sheet.update_cell(1, column+1, user)
 
 
 async def helpUser(message, commands):
@@ -239,7 +300,7 @@ async def helpUser(message, commands):
     else:
         for command in COMMANDS.values():
             formString += f"{command['usage']} \n"
-    
+
     formString = f"```{formString}```"
 
     await message.channel.send(formString)
@@ -265,7 +326,7 @@ async def randomProblem(message, commands):
     tag = "Any" if len(commands) < 3 else commands[2]
     subscription = "Any" if len(commands) < 4 else subscriptionQuery(commands[3])
 
-    params =[]
+    params = []
     params.append(f"difficulty = \'{difficulty}\'") if difficulty.lower() != "any" else None
     params.append(tag) if tag.lower() != "any" else None
     params.append(subscription) if subscription.lower() != "any" else None
@@ -279,7 +340,7 @@ async def randomProblem(message, commands):
 
     cursor.execute("Select Count(*) from problems " + script)
     count = cursor.fetchall()[0][0]
-    if(count == 0):
+    if count == 0:
         await message.channel.send("```Sorry no problems matched the criteria```")
         return
 
@@ -289,19 +350,15 @@ async def randomProblem(message, commands):
 
     await message.channel.send(link)
 
-    if(len(commands) == 5):
+    if len(commands) == 5:
+        print(url(link))
         if commands[4] == "d":
-            print(url(link))
             await description(message, [None, link], True)
-    # if(len(commands) == 5):
-    #     if commands[4] == "i":
-    #         await information(message, [None, link])
-    #     elif commands[4] == "d":
-    #         await description(message, [None, link])
-    #     elif commands[4] == 'id' or commands[4] == "di":
-    #         await information(message, [None, link])
-    #         await information(message, [None, link])
-
+        elif commands[4] == "i":
+            await information(message, [None, link])
+        elif commands[4] == "id" or commands[4] == "di":
+            await description(message, [None, link], True)
+            await information(message, [None, link])
 
 
 async def information(message, commands, skipCheck=False):
@@ -319,7 +376,7 @@ async def information(message, commands, skipCheck=False):
         connection.close()
         return
 
-    data = cursor.fetchone()
+    data = cursor.fetchone()[0]
 
     if not data:
         message.channel.send("Sorry this link/number does not exist")
@@ -342,7 +399,7 @@ async def information(message, commands, skipCheck=False):
 
     if not foundFirstType:
         formString += "Problem Tags: None"
-    
+
     formString += "\n```"
     connection.close()
 
@@ -359,20 +416,19 @@ async def description(message, commands, skipCheck=False):
         if len(commands) == 3 and not checkLanguage(commands[2]):
             await message.channel.send("Sorry this is not a valid language")
             return
-    
+
     connection, cursor = createConnection()
 
     cursor.execute("Select subscription from problems where link = %s", (commands[1],))
     data = cursor.fetchone()[0]
     connection.close()
 
-    if(data):
+    if data:
         await message.channel.send("```Sorry this question requires a subscription```")
         return
 
-
     print("Template function was called with the following parameters:", commands)
-    
+
     driver = setupBroswer()
     print(commands[1])
     driver.get(commands[1])
@@ -418,7 +474,7 @@ async def euler(message, commands):
 async def codechef(message, commands):
     """Returns a link to a question from codechef, will be adding other comands"""
     if len(commands) == 2 and not allowedCodeChefDifficulty(commands[1]):
-        await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenger```") 
+        await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenger```")
         return
 
     connection, cursor = createConnection()
@@ -427,10 +483,149 @@ async def codechef(message, commands):
     cursor.execute("Select Count(*) from codechef" + script)
     count = cursor.fetchall()[0][0]
     cursor.execute("Select * from codechef" + script)
-    link = cursor.fetchall()[randint(1,count)][2]
+    link = cursor.fetchall()[randint(1, count)][2]
 
     connection.close()
     await message.channel.send(link)
+
+
+def validProblemNumber(problemNumber: int, problemType: str) -> bool:
+    if type == "euler":
+        global eulerCount
+        return True, eulerCount if problemNumber <= eulerCount else False, eulerCount
+
+    connection, cursor = createConnection()
+
+    cursor.execute(f"Select Coun(*) from {problemType}")
+    total = cursor.fetchone()[0]
+
+    connection.close()
+    return True, total if problemNumber <= total and problemNumber >= 0 else False, total
+
+
+async def completed(message, commands):
+    """ Marks a problem completed for the user who called the command"""
+    problem_type = commands[1].lower()
+    problem_number = commands[2]
+    worksheet_name = worksheetName(problem_type)
+    markType = "C" if len(commands) < 4 or commands[3] >= 1 else "NC"
+
+    if worksheet_name == "":
+        await message.channe.send("This is not a valid type, please pick from leetcode, euler or codechef")
+        return
+
+    isValid, total = validProblemNumber(problem_number, problem_type)
+
+    if not isValid:
+        await message.channel.send(f"The given problem number is either too big or too small, the total number of questions for {problem_type} is {total}")
+        return
+
+    # Need to do complete logic here
+    sheet = getWorksheet(worksheet_name)
+    row_count = sheet.wks.row_count - 1 # Subtract 1 because header is not counted
+    if total > row_count:
+        sheet.resize(total - row_count)
+
+    user_list = sheet.col_values(1)
+    user_index = -1 
+    for index, user in enumerate(user_list):
+        if user == message.author:
+            user_index = index + 1
+            break
+
+    if user_index == -1:
+        sheet.add_cols(1)
+        user_index = len(user_list)+1
+        sheet.update_cell(1, user_index, message.author)
+
+    sheet.update(problem_number+1, user_index, markType)
+
+    await message.channel.send("Sheet has been updated")
+
+
+async def share(message, commands):
+    if not (validate_email(commands[1]) and commands[1][len(commands[1])-5:] == "gmail"):
+        await message.channel.send("This is not a valid gmail")
+        return
+
+    gc = setupSpreadsheets()
+    sheet = gc.open('Leetcode_Bot_Data')
+    sheet.share(commands[1], perm_type='user', role='viewer')
+
+    await message.channel.send(f"The sheet has been shared with {commands[1]}")
+
+
+async def listCompleted(message, commands):
+    worksheet_name = worksheetName(commands[1].lower())
+
+    if worksheet_name == "":
+        await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+
+    sheet = getWorksheet(worksheet_name)
+
+    user_list = sheet.col_values(1)
+    user_index = -1 
+    blankIndex = -1
+    for index, user in enumerate(user_list):
+        if user == message.author:
+            user_index = index + 1
+            break
+        if user == "":
+            blankIndex = index
+            break
+
+    if user_index == -1:
+        if blankIndex:
+            sheet.update_cell(1, blankIndex, message.author)
+        else:
+            sheet.add_cols(1)
+            user_index = len(user_list)+1
+            sheet.update_cell(1, user_index, message.author)
+
+    total = 0
+    formString = "Completed: "
+    for row in range(2, sheet.wks.row_count + 1):
+        currentRow = sheet.row_values(row)
+        if currentRow[user_index] == "C":
+            total += 1
+            formString += f"{row-1} "
+
+    formString = f"```Total {commands[1].title()} Completed: {total}\n" + formString + "```"
+
+    await message.channel.send(formString)
+
+
+async def topMembers(message, commands):
+    limit = 10 if len(commands) == 4 else commands[3]
+    if limit > 25:
+        await message.channel.send("Sorry limit was too big, setting it to 10")
+        limit = 10
+
+    worksheet_name = worksheetName(message[1].lower())
+    if worksheet_name == "":
+        await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+
+    sheet = getWorksheet(worksheet_name)
+
+    userCounts = {name: 0 for name in sheet.col_values(1)}
+    user_list = sheet.col_values(1)
+
+    for row in range(2, sheet.wks.row_count + 1):
+        currentRow = sheet.row_values(row)
+        for m in range(len(currentRow)):
+            if currentRow[m] == 1:
+                userCounts[user_list[m]] += 1
+
+    sortedCounts = sorted(userCounts.items(), key=lambda x: x[1], reverse=True)
+
+    formString = "```Top Members \n"
+    lastIndex = limit if len(sortedCounts) > limit else len(sortedCounts)
+    for x in range(lastIndex):
+        formString += f"{sortedCounts[x][0]}: {sortedCounts[x][1]} \n"
+
+    formString += "```"
+
+    await message.channel.send(formString)
 
 
 COMMANDS = {
@@ -487,6 +682,42 @@ COMMANDS = {
         "required_params": 0,
         "optional_params": 1,
         "total_params": 1
+    },
+    "mark": {
+        "help_message": "Marks a question as complete/incomplete in the spreadsheet",
+        "help_note": "From is either leetcode, euler or codechef, number is the problem number that has been completed, mark is either 0 or 1",
+        "usage": "!questions completed <from> <number> <mark>",
+        "function": completed,
+        "required_params": 2,
+        "optional_params": 1,
+        "total_params": 3
+    },
+    "listCompleted": {
+        "help_message": "Lists the number of questions completed by a user",
+        "help_note": "From is either leetcode, euler or codechef",
+        "usage": "!questions listCompleted <from>",
+        "function": listCompleted,
+        "required_params": 1,
+        "optional_params": 0,
+        "total_params": 1
+    },
+    "share": {
+        "help_message": "Shares the spreadsheet with users",
+        "help_note": "Gmail is the email of the person who the google sheet will be shared with",
+        "usage": "!questions share <email>",
+        "function": share,
+        "required_params": 1,
+        "optional_params": 0,
+        "total_params": 1
+    },
+    "top": {
+        "help_message": "Lists members in order of who completed the most problems of a type",
+        "help_note": "From is either leetcode, euler or codechef, limit is 10 by default and is optional(max limit is 25)",
+        "usage": "!questions share <from> <limti>",
+        "function": topMembers,
+        "required_params": 1,
+        "optional_params": 1,
+        "total_params": 2
     }
 }
 
@@ -496,6 +727,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     daily.start()
     update.start()
+
 
 @tasks.loop(minutes=30)
 async def daily():

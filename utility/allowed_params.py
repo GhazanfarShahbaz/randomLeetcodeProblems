@@ -4,17 +4,28 @@ subscription = {"yes": "subscription" , "no": "not subscription", "any": "any"}
 
 codechef_difficulty = {"beginner", "easy", "medium", "hard", "challenge"}
 
+problem_types = {"euler": "Euler_Data", "leetcode": "Leetcode_Data", "codechef": "Codechef_Data"}
+
+
 def allowedDifficulties(userPickedDifficulty: str) -> bool:
     return userPickedDifficulty.lower() in difficulties
+
 
 def allowedTags(userPickedTag: str) -> bool:
     return userPickedTag.lower() in tags
 
+
 def allowedCodeChefDifficulty(userPickedDifficulty: str) -> bool:
     return userPickedDifficulty.lower() in codechef_difficulty
+
 
 def allowedSubscription(userPickedSubscription: str) -> bool:
     return userPickedSubscription.lower() in subscription.keys()
 
+
 def subscriptionQuery(userPickedSubscription: str) -> str:
     return subscription[userPickedSubscription]
+
+
+def worksheetName(userPickedType: str) -> str:
+    return problem_types[userPickedType] if userPickedType in problem_types.keys() else ""
