@@ -67,6 +67,7 @@ def setupSpreadsheets():
     )
     authorization_file.flush()
     gc = gspread.service_account(filename=authorization_file.name)
+    authorization_file.close()
     return gc
 
 
@@ -310,10 +311,10 @@ async def randomProblem(message, commands):
     """Returns a link random problem from leetcode"""
     print("Random problem was called with the following commands: ", commands)
 
-    if len(commands) >=2 and not allowedDifficulties(commands[1]):
+    if len(commands) >= 2 and not allowedDifficulties(commands[1]):
         await message.channel.send("```You can only pick from these difficulties: Any, Easy, Medium, Hard```")
         return
-    if len(commands) >=3 and not allowedTags(commands[2]):
+    if len(commands) >= 3 and not allowedTags(commands[2]):
         await message.channel.send("```You can only pick from these tags: any, arrays, backtracking, binary_indexed_tree, binary_search, binary_search_tree, bit_manipulation, brain_teaser, breadth_first_search, depth_first_search, design, divide_and_conquer, dynamic_programming, geometry, graph, greedy, hash_table, heap, line_sweep, linked_lists, math, memoization, minimax, ordered_map, queue, random, recursion, rejection_sampling, reservoir_sampling, rolling_hash, segment_tree, sliding_window, sort, stack, string, suffix_array, topological_sort, tree, trie, two_pointers, union_find```")
         return
     if len(commands) >= 4 and not allowedSubscription(commands[3]):
@@ -560,6 +561,7 @@ async def listCompleted(message, commands):
 
     if worksheet_name == "":
         await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+        return
 
     sheet = getWorksheet(worksheet_name)
 
@@ -604,6 +606,7 @@ async def topMembers(message, commands):
     worksheet_name = worksheetName(message[1].lower())
     if worksheet_name == "":
         await message.channel.send("This is not a valid type, please pick from leetcode, euler or codechef")
+        return
 
     sheet = getWorksheet(worksheet_name)
 
