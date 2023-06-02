@@ -8,24 +8,78 @@ problem_types = {"euler": "Euler_Data", "leetcode": "Leetcode_Data", "codechef":
 
 
 def allowedDifficulties(userPickedDifficulty: str) -> bool:
+    """
+    Returns True if the given difficulty is allowed, False otherwise.
+
+    Args:
+        userPickedDifficulty (str): The difficulty picked by the user.
+
+    Returns:
+        bool: True if the difficulty is allowed, False otherwise.
+    """
     return userPickedDifficulty.lower() in difficulties
 
 
 def allowedTags(userPickedTag: str) -> bool:
+    """
+    Returns True if the given tag is allowed, False otherwise.
+
+    Args:
+        userPickedTag (str): The tag picked by the user.
+
+    Returns:
+        bool: True if the tag is allowed, False otherwise.
+    """
     return userPickedTag.lower() in tags
 
 
 def allowedCodeChefDifficulty(userPickedDifficulty: str) -> bool:
+    """
+    Returns True if the given CodeChef difficulty is allowed, False otherwise.
+
+    Args:
+        userPickedDifficulty (str): The CodeChef difficulty picked by the user.
+
+    Returns:
+        bool: True if the CodeChef difficulty is allowed, False otherwise.
+    """
     return userPickedDifficulty.lower() in codechef_difficulty
 
 
 def allowedSubscription(userPickedSubscription: str) -> bool:
+    """
+    Returns True if the given subscription type is allowed, False otherwise.
+
+    Args:
+        userPickedSubscription (str): The subscription type picked by the user.
+
+    Returns:
+        bool: True if the subscription type is allowed, False otherwise.
+    """
     return userPickedSubscription.lower() in subscription.keys()
 
 
 def subscriptionQuery(userPickedSubscription: str) -> str:
+    """
+    Returns the query string for the given subscription type.
+
+    Args:
+        userPickedSubscription (str): The subscription type picked by the user.
+
+    Returns:
+        str: The query string for the subscription type.
+    """
     return subscription[userPickedSubscription]
 
 
 def worksheetName(userPickedType: str) -> str:
+    """
+    Returns the name of the worksheet for the given problem type, or an empty string if the type is not recognized.
+
+    Args:
+        userPickedType (str): The problem type picked by the user.
+
+    Returns:
+        str: The name of the worksheet for the problem type, or an empty string if the type is not recognized.
+    """
     return problem_types[userPickedType] if userPickedType in problem_types.keys() else ""
