@@ -109,20 +109,20 @@ class LeetCodeQuestionRepository(object):
         """
         query = self.session.query(LeetCodeQuestion)
 
-        if "name" in filter_form:
+        if "name" in filter_form and filter_form["name"]:
             query = query.filter(LeetCodeQuestion.name.ilike(f'%{filter_form["name"]}%'))
         
-        if "tag" in filter_form:
+        if "tag" in filter_form and filter_form["tag"]:
             tags_filters = [LeetCodeQuestion.tags.contains(tag) for tag in filter_form["tag"]]
             query = query.filter(or_(*tags_filters))
         
-        if "difficulty" in filter_form:
+        if "difficulty" in filter_form and filter_form["difficulty"]:
             query = query.filter(LeetCodeQuestion.difficulty.in_(filter_form["difficulty"]))
             
-        if "subscription" in filter_form:
+        if "subscription" in filter_form and filter_form["subscription"]:
             query = query.filter(LeetCodeQuestion.subscription == filter_form["subscription"])
             
-        if "acceptance_rate" in filter_form:
+        if "acceptance_rate" in filter_form and filter_form["acceptance_rate"]:
             query = query.filter(LeetCodeQuestion.acceptance > filter_form["acceptance_rate"])
             
         return query.order_by(func.random()).first()
