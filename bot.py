@@ -28,7 +28,17 @@ async def on_ready():
     print(f'We have logged in as {client.user}')
 
 async def helpUser(message, commands):
-    """Provides the user a list of commands or gives instructions on how to use a command"""
+    """
+    Provides the user with a list of available commands or provides help instructions for a specific command.
+
+    Args:
+        message: The message object.
+        commands: A list of command arguments. The function accepts one optional argument: the name of a specific command.
+
+    Returns:
+        None: This function does not return anything.
+    """
+    
     print("Help user was called with the following commands: ", commands)
     formString = ""
 
@@ -49,7 +59,22 @@ async def helpUser(message, commands):
 
 
 async def randomProblem(message, commands):
-    """Returns a link random problem from leetcode"""
+    """
+    Returns a link to a random coding problem from LeetCode, filtered by difficulty, tag, and subscription status.
+
+    Args:
+        message: The message object.
+        commands: A list of command arguments. The function accepts up to four optional arguments:
+            - Difficulty (string): The difficulty level of the problem. Must be one of "easy", "medium", "hard", or "any". Default: "any".
+            - Tag (string): The tag associated with the problem. Must be one of the available tags, or "any". Default: "any".
+            - Subscription (string): Whether the problem requires a paid subscription to access. Must be "yes", "no", or "any". Default: "any".
+            - 'extras' (string): any extra words
+ 
+
+    Returns:
+        None: This function does not return anything.
+    """
+    
     print("Random problem was called with the following commands: ", commands)
 
     if len(commands) >= 2 and not allowedDifficulties(commands[1]):
@@ -89,7 +114,17 @@ async def randomProblem(message, commands):
 
 
 async def codechef(message, commands):
-    """Returns a link to a question from codechef, will be adding other comands"""
+    """
+    Returns a link to a coding problem from CodeChef.
+
+    Args:
+        message: The message object.
+        commands: A list of command arguments. The only optional argument is the difficulty.
+
+    Returns:
+        None: This function does not return anything.
+    """
+    
     if len(commands) == 2 and not allowedCodeChefDifficulty(commands[1]):
         await message.channel.send("```This is not a valid difficulty. Please pick from the following: beginner, easy, medium, hard, challenge```")
         return
@@ -108,6 +143,17 @@ async def codechef(message, commands):
 
 
 async def euler(message, commands):
+    """
+    Generates a random Project Euler problem number and returns a link to the corresponding problem.
+
+    Args:
+        message: The message object.
+        commands: A list of command arguments (not used in this function).
+
+    Returns:
+        None: This function does not return anything.
+    """
+    
     global eulerCount
     await message.channel.send(f"https://projecteuler.net/problem={randint(1,eulerCount)}")
 
@@ -154,6 +200,16 @@ COMMANDS = {
 
 @client.event
 async def on_message(message):
+     """
+    This function is called automatically by the Discord API whenever a new message is sent in the channel.
+
+    Args:
+        message: A Message object representing the new message.
+
+    Returns:
+        None: This function does not return anything.
+    """
+    
     if message.author == client.user:
         return
 
