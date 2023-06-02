@@ -1,8 +1,11 @@
 from sqlalchemy import or_
+from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
 
 from database.model import Session as Sess
 from database.models.leetcode_question import LeetCodeQuestion
+
+from typing import List
 
 class LeetCodeQuestionRepository(object):
     """
@@ -54,7 +57,7 @@ class LeetCodeQuestionRepository(object):
         self.db_session.commit()
 
         
-    def filter(self, filter_form: dict) -> list[LeetCodeQuestion]:
+    def filter(self, filter_form: dict) -> List[LeetCodeQuestion]:
         """
         Filters LeetCodeQuestion objects in the database based on the given filter parameters.
 
@@ -88,6 +91,41 @@ class LeetCodeQuestionRepository(object):
             query = query.filter(LeetCodeQuestion.acceptance > filter_form["acceptance_rate"])
             
         return query.all()
+    
+    def filter_and_get_random(self, filter_form: dict) -> LeetCodeQuestion:
+        """
+        Filters LeetCodeQuestion objects in the database based on the given filter parameters.
+
+        Args:
+            filter_form (dict): A dictionary containing the filter parameters. Valid keys are:
+                - 'name': A string to search the 'name' column for. Performs a case-insensitive search.
+                - 'tag': A list of strings to search the 'tags' column for. Matches if any of the tags are present.
+                - 'difficulty': A list of strings to search the 'difficulty' column for. Matches if any of the difficulties are present.
+                - 'subscription': A boolean value to search the 'subscription' column for. Matches if the value is True.
+                - 'acceptance_rate': A float value to search the 'acceptance' column for. Matches if the value is greater than the given value.
+
+        Returns:
+            LeetCodeQuestion: A LeetCodeQuestion object that matchs the filter criteria.
+        """
+        query = self.session.query(LeetCodeQuestion)
+
+        if "name" in filter_form:
+            query = query.filter(LeetCodeQuestion.name.ilike(f'%{filter_form["name"]}%'))
+        
+        if "tag" in filter_form:
+            tags_filters = [LeetCodeQuestion.tags.contains(tag) for tag in filter_form["tag"]]
+            query = query.filter(or_(*tags_filters))
+        
+        if "difficulty" in filter_form:
+            query = query.filter(LeetCodeQuestion.difficulty.in_(filter_form["difficulty"]))
+            
+        if "subscription" in filter_form:
+            query = query.filter(LeetCodeQuestion.subscription == filter_form["subscription"])
+            
+        if "acceptance_rate" in filter_form:
+            query = query.filter(LeetCodeQuestion.acceptance > filter_form["acceptance_rate"])
+            
+        return query.order_by(func.random()).first()
         
 
     def update(self, question: LeetCodeQuestion):
