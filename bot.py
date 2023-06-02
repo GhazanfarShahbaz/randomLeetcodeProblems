@@ -200,7 +200,7 @@ COMMANDS = {
 
 @client.event
 async def on_message(message):
-     """
+    """
     This function is called automatically by the Discord API whenever a new message is sent in the channel.
 
     Args:
