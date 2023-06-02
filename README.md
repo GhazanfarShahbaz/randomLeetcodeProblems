@@ -1,5 +1,7 @@
 # Leetcode Bot
 ## The Questions Bot is a simple Discord bot that can be used to help users find practice problems for coding exercises.
+## If you want to add this bot to your server use the following link: https://discord.com/api/oauth2/authorize?client_id=1004545887965548644&permissions=2048&scope=bot
+
 
 ## Prerequisites
 ### To use the Questions Bot, you will need to have Python 3 installed on your machine, you then need to install the packages specified in requirements.txt
