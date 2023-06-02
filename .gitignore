@@ -12,3 +12,5 @@ spreadsheets/
 __pycache__
 
 logs/
+
+.vscode
