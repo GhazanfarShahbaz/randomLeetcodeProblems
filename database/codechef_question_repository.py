@@ -109,19 +109,16 @@ class CodeChefQuestionRepository(object):
         """
         query = self.session.query(CodeChefQuestion)
 
-        if "name" in filters:
+        if "name" in filters and filters["name"]:
             query = query.filter(CodeChefQuestion.name.ilike(f'%{filters["name"]}%'))
 
-        if "tags" in filters:
+        if "tags" in filters and filters["tags"]:
             tag_filters = [CodeChefQuestion.tags.contains(tag) for tag in filters["tags"]]
             query = query.filter(or_(*tag_filters))
 
-        if "difficulty" in filters:
+        if "difficulty" in filters and filters["difficulty"]:
             query = query.filter(CodeChefQuestion.difficulty.in_(filters["difficulty"]))
-
-        if "solved" in filters:
-            query = query.filter(CodeChefQuestion.solved == filters["solved"])
-
+            
         return query.order_by(func.random()).first()
 
 
