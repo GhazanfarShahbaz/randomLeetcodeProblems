@@ -1,6 +1,16 @@
 test.py
+
 .env
 env/
+
 credentials.json
+
 quickstart.py
+
 spreadsheets/
+
+__pycache__
+
+logs/
+
+.vscode

@@ -1,4 +1,6 @@
-tags = {
+from typing import Dict, Tuple
+
+tags: Dict[str, str] = {
     "Arrays": "https://leetcode.com/problemset/all/?topicSlugs=array",
     "Hash Table": "https://leetcode.com/problemset/all/?topicSlugs=hash-table",
     "Linked Lists": "https://leetcode.com/problemset/all/?topicSlugs=linked-list",
@@ -11,7 +13,7 @@ tags = {
     "Backtracking": "https://leetcode.com/problemset/all/?topicSlugs=backtracking",
     "Stack": "https://leetcode.com/problemset/all/?topicSlugs=stack",
     "Heap": "https://leetcode.com/problemset/all/?topicSlugs=heap",
-    'Greedy': "https://leetcode.com/problemset/all/?topicSlugs=greedy",
+    "Greedy": "https://leetcode.com/problemset/all/?topicSlugs=greedy",
     "Sort": "https://leetcode.com/problemset/all/?topicSlugs=sort",
     "Bit Manipulation": "https://leetcode.com/problemset/all/?topicSlugs=bit-manipulation",
     "Tree": "https://leetcode.com/problemset/all/?topicSlugs=tree",
@@ -41,7 +43,55 @@ tags = {
     "Suffix Array": "https://leetcode.com/problemset/concurrency/?topicSlugs=suffix-array"
 }
 
-tag_corr = {'Arrays': 'arrays', 'Backtracking': 'backtracking', 'Binary Indexed Tree': 'binary_indexed_tree', 'Binary Search': 'binary_search', 'Binary Search Tree': 'binary_search_tree', 'Bit Manipulation': 'bit_manipulation', 'Brain Teaser': 'brain_teaser', 'Breadth First Search': 'breadth_first_search', 'Depth First Search': 'depth_first_search', 'Design': 'design', 'Divide and Conquer': 'divide_and_conquer', 'Dynamic Programming': 'dynamic_programming', 'Geometry': 'geometry', 'Graph': 'graph', 'Greedy': 'greedy', 'Hash Table': 'hash_table', 'Heap': 'heap', 'Line Sweep': 'line_sweep', 'Linked Lists': 'linked_lists', 'Math': 'math', 'Memoization': 'memoization', 'Minimax': 'minimax', 'Ordered Map': 'ordered_map', 'Queue': 'queue', 'Random': 'random', 'Recursion': 'recursion', 'Rejection Sampling': 'rejection_sampling', 'Reservoir Sampling': 'reservoir_sampling', 'Rolling Hash': 'rolling_hash', 'Segment Tree': 'segment_tree', 'Sliding Window': 'sliding_window', 'Sort': 'sort', 'Stack': 'stack', 'String': 'string', 'Suffix Array': 'suffix_array', 'Topological Sort': 'topological_sort', 'Tree': 'tree', 'Trie': 'trie', 'Two Pointers': 'two_pointers', 'Union Find': 'union_find'}
+tag_corr: Dict[str, str] = {
+    "Arrays": "arrays",
+    "Backtracking": "backtracking",
+    "Binary Indexed Tree": "binary_indexed_tree",
+    "Binary Search": "binary_search",
+    "Binary Search Tree": "binary_search_tree",
+    "Bit Manipulation": "bit_manipulation",
+    "Brain Teaser": "brain_teaser",
+    "Breadth First Search": "breadth_first_search",
+    "Depth First Search": "depth_first_search",
+    "Design": "design",
+    "Divide and Conquer": "divide_and_conquer",
+    "Dynamic Programming": "dynamic_programming",
+    "Geometry": "geometry",
+    "Graph": "graph",
+    "Greedy": "greedy",
+    "Hash Table": "hash_table", 
+    "Heap": "heap",
+    "Line Sweep": "line_sweep",
+    "Linked Lists": "linked_lists",
+    "Math": "math",
+    "Memoization": "memoization",
+    "Minimax": "minimax",
+    "Ordered Map": "ordered_map",
+    "Queue": "queue",
+    "Random": "random",
+    "Recursion": "recursion",
+    "Rejection Sampling": "rejection_sampling", 
+    "Reservoir Sampling": "reservoir_sampling",
+    "Rolling Hash": "rolling_hash",
+    "Segment Tree": "segment_tree",
+    "Sliding Window": "sliding_window",
+    "Sort": "sort",
+    "Stack": "stack",
+    "String": "string", 
+    "Suffix Array": "suffix_array",
+    "Topological Sort": "topological_sort", 
+    "Tree": "tree",
+    "Trie": "trie",
+    "Two Pointers": "two_pointers",
+    "Union Find": "union_find"
+}
 
-def getTags():
+
+def getTags() -> Tuple[Dict[str, str], Dict[str, str]]:
+    """
+    Returns a tuple containing a list of all available tags and a dictionary mapping tags to their full names.
+
+    Returns:
+        Tuple[List[str], Dict[str, str]]: A tuple containing a list of all available tags and a dictionary mapping tags to their full names.
+    """
     return tags, tag_corr

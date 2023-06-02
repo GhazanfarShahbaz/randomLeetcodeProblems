@@ -1,4 +1,4 @@
-,name,link,submitLink,submittedSolutions,accuracy,statusLink,difficulty
+id,name,link,submit_link,submitted_solutions,accuracy,status_link,difficulty
 0,Chef and IPC Certificates,https://www.codechef.com/problems/IPCCERT,https://www.codechef.com/submit/IPCCERT,454,61.06,https://www.codechef.com/status/IPCCERT,beginner
 1,Ada and Dishes,https://www.codechef.com/problems/ADADISH,https://www.codechef.com/submit/ADADISH,1104,41.43,https://www.codechef.com/status/ADADISH,beginner
 2,The One Who Knocks ,https://www.codechef.com/problems/EOOPR,https://www.codechef.com/submit/EOOPR,1272,26.85,https://www.codechef.com/status/EOOPR,beginner
