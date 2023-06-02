@@ -1,7 +1,5 @@
-from typing import List
-
 from sqlalchemy import or_
-from sqlalchemy.orm import Session, Query
+from sqlalchemy.orm import Session
 
 from database.model import Session as Sess
 from database.models.leetcode_question import LeetCodeQuestion
