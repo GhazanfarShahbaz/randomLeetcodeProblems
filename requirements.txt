@@ -15,7 +15,7 @@ idna==3.4
 multidict==6.0.4
 python-dotenv==1.0.0
 pytz==2023.3
-requests==2.31.0
+requests==2.32.2
 soupsieve==2.4.1
 SQLAlchemy==2.0.15
 typing==3.7.4.3
